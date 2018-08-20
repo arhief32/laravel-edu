@@ -31,12 +31,8 @@ class User extends Authenticatable
         'bill_amount'
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    // protected $hidden = [
-    //     'password', 'remember_token',
-    // ];
+    public function status()
+    {
+        return $this->belongsTo('App\Status','status_id','error_code');
+    }
 }
