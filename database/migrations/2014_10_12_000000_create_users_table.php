@@ -25,9 +25,6 @@ class CreateUsersTable extends Migration
             $table->string('briva_number');
             $table->string('bill_name');
             $table->string('bill_amount');
-            // $table->string('email')->unique();
-            // $table->string('password');
-            // $table->rememberToken();
             $table->timestamps();
         });
     }

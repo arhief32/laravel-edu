@@ -13,9 +13,9 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($briva_number)
+    public function request($briva_number)
     {
-        $result = User::where('briva_number',$briva_number)->first();
+        $result = User::where('briva_number',$briva_number)->with('status')->first();
         
         return response()->json($result);
     }
