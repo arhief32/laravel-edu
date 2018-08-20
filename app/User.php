@@ -30,13 +30,4 @@ class User extends Authenticatable
         'bill_name',
         'bill_amount'
     ];
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    // protected $hidden = [
-    //     'password', 'remember_token',
-    // ];
 }
