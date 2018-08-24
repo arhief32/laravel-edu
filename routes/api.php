@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,3 +19,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::get('/get-user-detail/{id}','UserController@request');
+
+Route::post('/login','Auth\LoginController@login');
+
+Route::prefix('/student')->group(function(){
+    Route::get('/profile','StudentController@profile');
+});
