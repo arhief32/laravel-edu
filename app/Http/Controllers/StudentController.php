@@ -9,6 +9,8 @@ class StudentController extends Controller
 {
     public function profile(Request $request)
     {
-        return response()->json($request);
+        $school_db = $request->school_id;
+        $student = DB::table($school_db.'.student')->select('*')->first();
+        return response()->json($student);
     }
 }
