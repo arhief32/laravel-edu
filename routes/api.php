@@ -20,8 +20,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('/get-user-detail/{id}','UserController@request');
 
-Route::post('/login','Auth\LoginController@login');
+Route::post('/login','Auth\AuthController@login');
 
 Route::prefix('/student')->group(function(){
     Route::get('/profile','StudentController@profile');
+});
+
+Route::prefix('/parent')->group(function(){
+    Route::get('/profile','ParentController@profile');
 });
