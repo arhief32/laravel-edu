@@ -46,22 +46,6 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        $username = $request->username;
-        $password = $this->hash($request->password);
-        $school_db = $request->school_db;
-
-        $validate_username = DB::table($school_db.'.student')->select('username','password')
-        ->where([['username',$username],['password',$password]])
-        ->first();
-
         
-        if($validate_username == true)
-        {
-            return response()->json($validate_username);
-        }
-        else
-        {
-            return response()->json(['status' => 'Unauthorized'], 401);
-        }
     }
 }
