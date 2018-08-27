@@ -108,11 +108,11 @@ class AuthController extends Controller
         // response
         if($check_student_auth == true)
         {
-            return response()->json($check_student_auth);
+            return response()->json(ResponseCode::authorized($check_student_auth));
         }
         elseif($check_parent_auth == true)
         {
-            return response()->json($check_parent_auth);
+            return response()->json(ResponseCode::authorized($check_parent_auth));
         }
         else
         {
