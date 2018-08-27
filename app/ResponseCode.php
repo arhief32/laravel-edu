@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class ResponseCode extends Model
 {
+    /**
+     * Response Code for Authorization
+     */
     public static function login_success($request)
     {
         return [
@@ -28,6 +31,15 @@ class ResponseCode extends Model
         return [
             'response_code' => '11',
             'description' => 'Tidak ada hak akses'
+        ];
+    }
+
+    public static function authorized($request)
+    {
+        return [
+            'response_code' => '00',
+            'description' => 'sukses',
+            'data' => $request
         ];
     }
 }
