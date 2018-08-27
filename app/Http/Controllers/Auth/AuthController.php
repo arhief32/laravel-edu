@@ -5,9 +5,13 @@ namespace App\Http\Controllers\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use App\ResponseCode;
 
 class AuthController extends Controller
 {
+    /**
+     * Validasi login
+     */
     public function validation(Request $request)
     {
         $school_db = DB::table('schooldb')
@@ -24,35 +28,59 @@ class AuthController extends Controller
         ];
     }
 
+    /**
+     * Enkripsi password
+     */
     public function hash($string) 
     {
 		return hash("sha512", $string . "ceca0623e7992c1620c7372408b6f41d");
     }
 
+    /**
+     * login
+     */
     public function login(Request $request)
     {
+        // mengecek value dari login
+        if($request->school_id == '' || $request->username == '' || $request->password == '')
+        {
+            return response()->json(ResponseCode::login_failed());
+        }
+
+        // mencari dan mencocokkan value ke database
         $validate_auth = DB::table($this->validation($request)['school_db'].'.student')
         ->select('username','password','usertypeID as user_type_id')
         ->where([['username',$this->validation($request)['username']],['password',$this->validation($request)['password']]])
         ->first();
         
+        // response
         if($validate_auth == true)
         {
             $validate_auth->school_id = $request->school_id;
-            return response()->json([
-                'status' => '200',
-                'message' => $validate_auth]);
+            
+            return response()->json(ResponseCode::login_success($validate_auth));
         }
         else
         {
-            return response()->json([
-                'status' => '401',
-                'message' => 'Unauthorized'], 401);
+            return response()->json(ResponseCode::login_failed());
         }
     }
 
+    /**
+     * Authorization for all action foreach middleware or user_type_id
+     */
     public static function authorization(Request $request)
     {
+        // mengecek value untuk authentication
+        if($request->header('school_id') == '' ||
+        $request->header('username') == '' ||
+        $request->header('password') == '' ||
+        $request->header('user_type_id') == '')
+        {
+            return response()->json(ResponseCode::unauthorized());
+        }
+
+        // define variable
         $username = $request->header('username');
         $password = $request->header('password');
         $user_type_id = $request->header('user_type_id');
@@ -61,9 +89,10 @@ class AuthController extends Controller
         ->where('schoolID',$request->header('school_id'))
         ->first();
 
+        // validasi auth
         if($school_db == false)
         {
-            return response()->json(['status' => 'Unauthorized'], 401);
+            return response()->json(ResponseCode::unauthorized());
         }
         
         $check_student_auth = DB::table($school_db->database.'.student')
@@ -76,6 +105,7 @@ class AuthController extends Controller
         ->where([['username',$username],['password',$password],['usertypeID',$user_type_id]])
         ->first();
 
+        // response
         if($check_student_auth == true)
         {
             return response()->json($check_student_auth);
@@ -86,20 +116,7 @@ class AuthController extends Controller
         }
         else
         {
-            return response()->json(['status' => 'Unauthorized'], 401);
+            return response()->json(ResponseCode::unauthorized());
         }
-    }
-
-    public static function example(Request $request)
-    {
-        $username = $request->header('username');
-        $password = $request->header('password');
-        $school_id = $request->header('school_id');
-        
-        return response()->json([
-            'username' => $username,
-            'password' => $password,
-            'school_id' => $school_id,
-        ]);
     }
 }
