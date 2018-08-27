@@ -60,6 +60,11 @@ class AuthController extends Controller
         ->select('database')
         ->where('schoolID',$request->header('school_id'))
         ->first();
+
+        if($school_db == false)
+        {
+            return response()->json(['status' => 'Unauthorized'], 401);
+        }
         
         $check_student_auth = DB::table($school_db->database.'.student')
         ->select('*')
