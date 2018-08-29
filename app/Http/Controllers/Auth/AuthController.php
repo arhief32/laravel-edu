@@ -5,29 +5,25 @@ namespace App\Http\Controllers\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Crypt;
 use App\ResponseCode;
-use App\Encrypt;
 
 class AuthController extends Controller
 {
     /**
-     * Validasi login
+     * Populate school list before login
      */
-    public function validation(Request $request)
+    public function getSchool()
     {
-        $school_db = DB::connection('school-gateway')->table('schooldb')
-        ->select('database')
-        ->where('schoolID',$request->school_id)
+        return response()->json(ResponseCode::success(
+            DB::connection('school-gateway')->table('schooldb')->select('schoolID as school_id','database as school_name')->get()));
+    }
+    
+    public function selectDatabase($school_id)
+    {
+        return DB::connection('school-gateway')->table('schooldb')
+        ->select('*')
+        ->where('schoolID',$school_id)
         ->first();
-        $username = $request->username;
-        $password = $this->hash($request->password);
-
-        return [
-            'school_db' => $school_db->database,
-            'username' => $username,
-            'password' => $password,
-        ];
     }
 
     /**
@@ -49,10 +45,24 @@ class AuthController extends Controller
             return response()->json(ResponseCode::login_failed());
         }
 
+        // define value dari variable
+        $school_db = $this->selectDatabase($request->school_id);
+        $username = $request->username;
+        $password = $this->hash($request->password);
+
+        // modify database select dynamically
+        config(['database.connections.mysql' => [
+            'driver' => 'mysql',
+            'host' => $school_db->hostname,
+            'database' => $school_db->database,
+            'username' => $school_db->username,
+            'password' => $school_db->password
+        ]]);
+
         // mencari dan mencocokkan value ke database
-        $validate_auth = DB::connection('school-gateway')->table($this->validation($request)['school_db'].'.student')
+        $validate_auth = DB::table('student')
         ->select('username','password','usertypeID as user_type_id')
-        ->where([['username',$this->validation($request)['username']],['password',$this->validation($request)['password']]])
+        ->where([['username',$username],['password',$password]])
         ->first();
         
         // response
@@ -86,10 +96,16 @@ class AuthController extends Controller
         $username = $request->header('username');
         $password = $request->header('password');
         $user_type_id = $request->header('user_type_id');
-        $school_db = DB::connection('school-gateway')->table('schooldb')
-        ->select('database')
-        ->where('schoolID',$request->header('school_id'))
-        ->first();
+        $school_db = (new self)->selectDatabase($request->header('school_id'));
+        
+        // modify database connection dynamically
+        config(['database.connections.mysql' => [
+            'driver' => 'mysql',
+            'host' => $school_db->hostname,
+            'database' => $school_db->database,
+            'username' => $school_db->username,
+            'password' => $school_db->password
+        ]]);
 
         // validasi auth
         if($school_db == false)
@@ -97,12 +113,12 @@ class AuthController extends Controller
             return response()->json(ResponseCode::unauthorized());
         }
         
-        $check_student_auth = DB::connection('school-gateway')->table($school_db->database.'.student')
+        $check_student_auth = DB::table('student')
         ->select('*')
         ->where([['username',$username],['password',$password],['usertypeID',$user_type_id]])
         ->first();
 
-        $check_parent_auth = DB::connection('school-gateway')->table($school_db->database.'.parents')
+        $check_parent_auth = DB::table('parents')
         ->select('*')
         ->where([['username',$username],['password',$password],['usertypeID',$user_type_id]])
         ->first();
@@ -122,46 +138,21 @@ class AuthController extends Controller
         }
     }
 
-    public function example(Request $request)
-    {
-        // $school_db = DB::connection('school-gateway')->table('schooldb')
-        // ->select('*')
-        // ->where('schoolID',$request->school_id)
-        // ->first();
+    // public function example(Request $request)
+    // {
+    //     $school_db = DB::connection('school-gateway')->table('schooldb')
+    //     ->select('*')
+    //     ->where('schoolID',$request->school_id)
+    //     ->first();
 
-        // config(['database.connections.mysql' => [
-        //     'driver' => 'mysql',
-        //     'host' => $school_db->hostname,
-        //     'database' => $school_db->database,
-        //     'username' => $school_db->username,
-        //     'password' => decode($school_db->password)
-        // ]]);
+    //     config(['database.connections.mysql' => [
+    //         'driver' => 'mysql',
+    //         'host' => $school_db->hostname,
+    //         'database' => $school_db->database,
+    //         'username' => $school_db->username,
+    //         'password' => $school_db->password
+    //     ]]);
 
-		// return DB::table('student')->select('*')->get();
-
-		$password = $request->password;
-
-		// $hashed_pwd = hash("sha512",$password);
-		
-		// $encrypted = Crypt::encryptString($password);
-
-		// $decrypted = Crypt::decryptString($encrypted);
-        // return Encrypt::decode('AKigChx/4Ch4inHSW7XGRCs7NyPx026dSfwqRMzmu/bwvXBIgFSZvJvCUHRbyTCEXWOzt1uD8qP2Mko7B1r9fA==', "ceca0623e7992c1620c7372408b6f41d");
-		// return [
-		// 	'password' => $password,
-		// 	'encrypted' => $encrypted,
-		// 	'balikannya' => $decrypted
-        // ];
-        // var_dump(rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5("ceca0623e7992c1620c7372408b6f41d"), 
-        // base64_decode("AKigChx/4Ch4inHSW7XGRCs7NyPx026dSfwqRMzmu/bwvXBIgFSZvJvCUHRbyTCEXWOzt1uD8qP2Mko7B1r9fA=="), MCRYPT_MODE_CBC, 
-        // md5(md5("ceca0623e7992c1620c7372408b6f41d"))), "\0"));
-
-        return Encrypt::decode("AKigChx/4Ch4inHSW7XGRCs7NyPx026dSfwqRMzmu/bwvXBIgFSZvJvCUHRbyTCEXWOzt1uD8qP2Mko7B1r9fA==","ceca0623e7992c1620c7372408b6f41d");
-
-        // return rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5("ceca0623e7992c1620c7372408b6f41d"), 
-        // base64_decode("AKigChx/4Ch4inHSW7XGRCs7NyPx026dSfwqRMzmu/bwvXBIgFSZvJvCUHRbyTCEXWOzt1uD8qP2Mko7B1r9fA=="), MCRYPT_MODE_CBC, 
-        // md5(md5("ceca0623e7992c1620c7372408b6f41d"))), "\0");
-
-        // return rtrim(, "\0");
-    }
+	// 	return DB::table('student')->select('*')->get();
+    // }
 }

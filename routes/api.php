@@ -20,6 +20,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('/get-user-detail/{id}','UserController@request');
 
+/**
+ * Apps
+ */
+
+Route::get('/get-school','Auth\AuthController@getSchool');
 Route::post('/login','Auth\AuthController@login');
 
 /**
