@@ -101,3 +101,8 @@ Route::prefix('/parent')->group(function(){
         Route::get('/holiday');
     });
 });
+
+
+
+
+Route::post('example','Auth\AuthController@example');
