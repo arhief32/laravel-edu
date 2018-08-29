@@ -9,7 +9,16 @@ class ResponseCode extends Model
     /**
      * Response Code for Authorization
      */
-    public static function login_success($request)
+    public static function success($request)
+    {
+        return [
+            'response_code' => '00',
+            'description' => 'Sukses',
+            'data' => $request
+        ];
+    }
+    
+     public static function login_success($request)
     {
         return [
             'response_code' => '00',
