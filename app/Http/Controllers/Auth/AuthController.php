@@ -60,17 +60,28 @@ class AuthController extends Controller
         ]]);
 
         // mencari dan mencocokkan value ke database
-        $validate_auth = DB::table('student')
+        $validate_auth_student = DB::table('student')
+        ->select('username','password','usertypeID as user_type_id')
+        ->where([['username',$username],['password',$password]])
+        ->first();
+
+        $validate_auth_parent = DB::table('parents')
         ->select('username','password','usertypeID as user_type_id')
         ->where([['username',$username],['password',$password]])
         ->first();
         
         // response
-        if($validate_auth == true)
+        if($validate_auth_student == true && $validate_auth_parent == false)
         {
-            $validate_auth->school_id = $request->school_id;
+            $validate_auth_student->school_id = $request->school_id;
             
-            return response()->json(ResponseCode::login_success($validate_auth));
+            return response()->json(ResponseCode::login_success($validate_auth_student));
+        }
+        else if($validate_auth_student == false && $validate_auth_parent == true)
+        {
+            $validate_auth_parent->school_id = $request->school_id;
+            
+            return response()->json(ResponseCode::login_success($validate_auth_parent));
         }
         else
         {
