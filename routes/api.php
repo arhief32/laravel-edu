@@ -14,11 +14,9 @@ use Illuminate\Support\Facades\DB;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::get('/get-user-detail/{id}','UserController@request');
+Route::get('/request-inquiry','InvoiceController@requestInquiry');
+Route::post('/request-payment','InvoiceController@requestPayment');
+Route::get('/example','InvoiceController@example');
 
 /**
  * Apps
