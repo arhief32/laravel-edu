@@ -40,13 +40,13 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         // mengecek value dari login
-        if($request->school_id == '' || $request->username == '' || $request->password == '')
+        if($request->schoolID == '' || $request->username == '' || $request->password == '')
         {
             return response()->json(ResponseCode::login_failed());
         }
 
         // define value dari variable
-        $school_db = $this->selectDatabase($request->school_id);
+        $school_db = $this->selectDatabase($request->schoolID);
         $username = $request->username;
         $password = $this->hash($request->password);
 
@@ -61,25 +61,25 @@ class AuthController extends Controller
 
         // mencari dan mencocokkan value ke database
         $validate_auth_student = DB::table('student')
-        ->select('username','password','usertypeID as user_type_id')
+        ->select('username','password','usertypeID')
         ->where([['username',$username],['password',$password]])
         ->first();
 
         $validate_auth_parent = DB::table('parents')
-        ->select('username','password','usertypeID as user_type_id')
+        ->select('username','password','usertypeID')
         ->where([['username',$username],['password',$password]])
         ->first();
         
         // response
         if($validate_auth_student == true && $validate_auth_parent == false)
         {
-            $validate_auth_student->school_id = $request->school_id;
+            $validate_auth_student->schoolID = $request->schoolID;
             
             return response()->json(ResponseCode::login_success($validate_auth_student));
         }
         else if($validate_auth_student == false && $validate_auth_parent == true)
         {
-            $validate_auth_parent->school_id = $request->school_id;
+            $validate_auth_parent->schoolID = $request->schoolID;
             
             return response()->json(ResponseCode::login_success($validate_auth_parent));
         }
@@ -95,10 +95,10 @@ class AuthController extends Controller
     public static function authorization(Request $request)
     {
         // mengecek value untuk authentication
-        if($request->header('school_id') == '' ||
+        if($request->header('schoolID') == '' ||
         $request->header('username') == '' ||
         $request->header('password') == '' ||
-        $request->header('user_type_id') == '')
+        $request->header('userTypeID') == '')
         {
             return response()->json(ResponseCode::unauthorized());
         }
@@ -106,9 +106,9 @@ class AuthController extends Controller
         // define variable
         $username = $request->header('username');
         $password = $request->header('password');
-        $user_type_id = $request->header('user_type_id');
-        $school_db = (new self)->selectDatabase($request->header('school_id'));
-        
+        $user_type_id = $request->header('userTypeID');
+        $school_db = (new self)->selectDatabase($request->header('schoolID'));
+
         // modify database connection dynamically
         config(['database.connections.mysql' => [
             'driver' => 'mysql',
