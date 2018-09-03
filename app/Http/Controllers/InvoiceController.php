@@ -89,7 +89,7 @@ class InvoiceController extends Controller
                             'sectionID' => $student->sectionID,
                             'studentID' => $student->studentID,
                             'clearancetype' => 'paid',
-                            'invoicename' => $student->registerNO.' Arief test - '.$student->name,
+                            'invoicename' => $student->registerNO.' - '.$student->name,
                             'invoicedescription' => '',
                             'paymentyear' => Carbon::now()->format('Y'),
                             'schoolyearID' => $student->schoolyearID,
@@ -112,9 +112,10 @@ class InvoiceController extends Controller
                     DB::table('payment')->insert(
                         [
                             'schoolyearID' => $student->schoolyearID,
+                            'invoiceID' => $payment['invoiceID'],
                             'studentID' => $student->studentID,
                             'paymentamount' => $payment['amount'],
-                            'paymenttype' => 'Cash',
+                            'paymenttype' => 'BRIVA',
                             'paymentdate' => Carbon::now()->format('Y-m-d'),
                             'paymentday' => Carbon::now()->format('d'),
                             'paymentmonth' => Carbon::now()->format('m'),
