@@ -40,7 +40,7 @@ Route::prefix('/student')->group(function(){
     });
 
     // Student Attendance
-    Route::get('/student-attendance');
+    Route::get('/student-attendance','StudentController@studentAttendance');
 
     // Exam Schedule
     Route::get('/exam-schedule');
@@ -80,7 +80,8 @@ Route::prefix('/parent')->group(function(){
     });
 
     // Student Attendance
-    Route::get('/student-attendance');
+    Route::get('/student-list','ParentController@studentList');
+    Route::get('/student-attendance','ParentController@studentAttendance');
 
     // Exam Schedule
     Route::get('/exam-schedule');
