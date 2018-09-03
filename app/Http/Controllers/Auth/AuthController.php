@@ -128,6 +128,10 @@ class AuthController extends Controller
         ->select('*')
         ->where([['username',$username],['password',$password],['usertypeID',$user_type_id]])
         ->first();
+        $check_student_auth->parents = DB::table('parents')
+        ->select('*')
+        ->where('parentsID',$check_student_auth->parentID)
+        ->first();
 
         $check_parent_auth = DB::table('parents')
         ->select('*')
