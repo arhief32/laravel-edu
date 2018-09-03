@@ -12,43 +12,52 @@ class ResponseCode extends Model
     public static function success($request)
     {
         return [
-            'response_code' => '00',
-            'description' => 'Sukses',
-            'data' => $request
+            'responseCode' => '00',
+            'responseDesc' => 'Success',
+            'responseData' => $request
+        ];
+    }
+
+    public static function failed($request)
+    {
+        return [
+            'responseCode' => '01',
+            'responseDesc' => 'Gagal',
+            'responseData' => $request
         ];
     }
     
-     public static function login_success($request)
+    public static function login_success($request)
     {
         return [
-            'response_code' => '00',
-            'description' => 'Login sukses',
-            'data' => $request
+            'responseCode' => '00',
+            'responseDesc' => 'Login sukses',
+            'responseData' => $request
         ];
     }
 
     public static function login_failed()
     {
         return [
-            'response_code' => '01',
-            'description' => 'Login gagal'
+            'responseCode' => '01',
+            'responseDesc' => 'Login gagal'
         ];
     }
 
     public static function unauthorized()
     {
         return [
-            'response_code' => '11',
-            'description' => 'Tidak ada hak akses'
+            'responseCode' => '11',
+            'responseDesc' => 'Tidak ada hak akses'
         ];
     }
 
     public static function authorized($request)
     {
         return [
-            'response_code' => '00',
-            'description' => 'sukses',
-            'data' => $request
+            'responseCode' => '00',
+            'responseDesc' => 'sukses',
+            'responseData' => $request
         ];
     }
 }

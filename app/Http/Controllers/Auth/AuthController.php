@@ -100,7 +100,7 @@ class AuthController extends Controller
         $request->header('password') == '' ||
         $request->header('userTypeID') == '')
         {
-            return response()->json(ResponseCode::unauthorized());
+            return false;
         }
 
         // define variable
@@ -121,7 +121,7 @@ class AuthController extends Controller
         // validasi auth
         if($school_db == false)
         {
-            return response()->json(ResponseCode::unauthorized());
+            return false;
         }
         
         $check_student_auth = DB::table('student')
@@ -137,33 +137,15 @@ class AuthController extends Controller
         // response
         if($check_student_auth == true)
         {
-            return response()->json(ResponseCode::authorized($check_student_auth));
+            return $check_student_auth;
         }
         elseif($check_parent_auth == true)
         {
-            return response()->json(ResponseCode::authorized($check_parent_auth));
+            return $check_parent_auth;
         }
         else
         {
-            return response()->json(ResponseCode::unauthorized());
+            return false;
         }
     }
-
-    // public function example(Request $request)
-    // {
-    //     $school_db = DB::connection('school-gateway')->table('schooldb')
-    //     ->select('*')
-    //     ->where('schoolID',$request->school_id)
-    //     ->first();
-
-    //     config(['database.connections.mysql' => [
-    //         'driver' => 'mysql',
-    //         'host' => $school_db->hostname,
-    //         'database' => $school_db->database,
-    //         'username' => $school_db->username,
-    //         'password' => $school_db->password
-    //     ]]);
-
-	// 	return DB::table('student')->select('*')->get();
-    // }
 }
