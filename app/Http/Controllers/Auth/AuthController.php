@@ -124,19 +124,28 @@ class AuthController extends Controller
             return false;
         }
         
-        $check_student_auth = DB::table('student')
-        ->select('*')
-        ->where([['username',$username],['password',$password],['usertypeID',$user_type_id]])
-        ->first();
-        $check_student_auth->parents = DB::table('parents')
-        ->select('*')
-        ->where('parentsID',$check_student_auth->parentID)
-        ->first();
+        $check_student_auth = '';
+        $check_parent_auth = '';
+        
+        if($user_type_id == 3)
+        {
+            $check_student_auth = DB::table('student')
+            ->select('*')
+            ->where([['username',$username],['password',$password],['usertypeID',$user_type_id]])
+            ->first();
+            $check_student_auth->parents = DB::table('parents')
+            ->select('*')
+            ->where('parentsID',$check_student_auth->parentID)
+            ->first();
+        }
 
-        $check_parent_auth = DB::table('parents')
-        ->select('*')
-        ->where([['username',$username],['password',$password],['usertypeID',$user_type_id]])
-        ->first();
+        if($user_type_id == 4)
+        {
+            $check_parent_auth = DB::table('parents')
+            ->select('*')
+            ->where([['username',$username],['password',$password],['usertypeID',$user_type_id]])
+            ->first();
+        }
 
         // response
         if($check_student_auth == true)
