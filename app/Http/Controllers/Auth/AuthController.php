@@ -133,10 +133,18 @@ class AuthController extends Controller
             ->select('*')
             ->where([['username',$username],['password',$password],['usertypeID',$user_type_id]])
             ->first();
-            $check_student_auth->parents = DB::table('parents')
-            ->select('*')
-            ->where('parentsID',$check_student_auth->parentID)
-            ->first();
+            
+            if($check_student_auth == false )
+            {
+                return false;
+            }
+            else
+            {
+                $check_student_auth->parents = DB::table('parents')
+                ->select('*')
+                ->where('parentsID',$check_student_auth->parentID)
+                ->first();
+            }
         }
 
         if($user_type_id == 4)
