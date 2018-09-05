@@ -49,7 +49,7 @@ Route::prefix('/student')->group(function(){
     Route::get('/mark');
 
     // Promo
-    Route::prefix('/promo');
+    Route::get('/promo','PromoController@promo');
 
     // Account
     Route::prefix('/account')->group(function(){
@@ -90,7 +90,7 @@ Route::prefix('/parent')->group(function(){
     Route::get('/mark');
 
     // Promo
-    Route::prefix('/promo');
+    Route::get('/promo','PromoController@promo');
 
     // Account
     Route::prefix('/account')->group(function(){
