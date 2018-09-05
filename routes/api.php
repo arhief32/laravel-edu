@@ -59,9 +59,9 @@ Route::prefix('/student')->group(function(){
 
     // Announcement
     Route::prefix('/announcement')->group(function(){
-        Route::get('/notice');
-        Route::get('/event');
-        Route::get('/holiday');
+        Route::get('/notice','AnnouncementController@getNotice');
+        Route::get('/event','AnnouncementController@getEvent');
+        Route::get('/holiday','AnnouncementController@getHoliday');
     });
 });
 
@@ -100,9 +100,9 @@ Route::prefix('/parent')->group(function(){
 
     // Announcement
     Route::prefix('/announcement')->group(function(){
-        Route::get('/notice');
-        Route::get('/event');
-        Route::get('/holiday');
+        Route::get('/notice','AnnouncementController@getNotice');
+        Route::get('/event','AnnouncementController@getEvent');
+        Route::get('/holiday','AnnouncementController@getHoliday');
     });
 });
 
