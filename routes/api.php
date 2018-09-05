@@ -34,9 +34,9 @@ Route::prefix('/student')->group(function(){
 
     // Academic
     Route::prefix('/academic')->group(function(){
-        Route::get('/subject');
-        Route::get('/assignment');
-        Route::get('/routine');
+        Route::get('/subject','AcademicController@getSubject');
+        Route::get('/assignment','AcademicController@getAssignment');
+        Route::get('/routine','AcademicController@getRoutine');
     });
 
     // Student Attendance
@@ -74,9 +74,9 @@ Route::prefix('/parent')->group(function(){
 
     // Academic
     Route::prefix('/academic')->group(function(){
-        Route::get('/subject');
-        Route::get('/assignment');
-        Route::get('/routine');
+        Route::get('/subject','AcademicController@getSubject');
+        Route::get('/syllabus','AcademicController@getSyllabus');
+        Route::get('/routine','AcademicController@getRoutine');
     });
 
     // Student Attendance
