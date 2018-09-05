@@ -18,12 +18,11 @@ class ResponseCode extends Model
         ];
     }
 
-    public static function failed($request)
+    public static function failed()
     {
         return [
             'responseCode' => '01',
-            'responseDesc' => 'Gagal',
-            'responseData' => $request
+            'responseDesc' => 'Gagal'
         ];
     }
     

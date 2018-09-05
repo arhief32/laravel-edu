@@ -84,7 +84,7 @@ class AttendanceController extends Controller
                     $attendance->a31
                 ];
                 
-                $details = implode('|',$details);
+                // $details = implode('|',$details);
                 array_push($attendances, 
                 [
                     'monthyear' => $month_year,
@@ -137,7 +137,7 @@ class AttendanceController extends Controller
                     $attendance->a31
                 ];
                 
-                $details = implode('|',$details);
+                // $details = implode('|',$details);
                 array_push($attendances, 
                 [
                     'monthyear' => $month_year,
