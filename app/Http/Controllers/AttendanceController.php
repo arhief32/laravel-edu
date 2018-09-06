@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Auth\AuthController as Auth;
+use App\Http\Controllers\StudentController as Student;
 use App\ResponseCode;
 use Illuminate\Http\Request;
 
@@ -99,7 +100,6 @@ class AttendanceController extends Controller
             ];
 
             return response()->json(ResponseCode::success($data));
-            // return response()->json(ResponseCode::success($result));
         }
     }
 
@@ -114,13 +114,13 @@ class AttendanceController extends Controller
         else
         {
             $this->selectDatabase($request->header('schoolID'));
-            
+            $student = Student::getStudent($request);
             // SELECT * FROM `attendance` 
             // WHERE `studentID` = 'xxx' AND `classesID` = 'xxx' AND `schoolyearID` = 'xxxx' 
             // ORDER BY `monthyear` asc
             $result = DB::table('attendance')->select('attendance.*','student.*')
             ->join('student','attendance.studentID','=','student.studentID')
-            ->where([['attendance.studentID', $request->studentID],['attendance.classesID', $request->classesID],['attendance.schoolyearID', $request->schoolyearID]])
+            ->where([['attendance.studentID', $student->studentID],['attendance.classesID', $student->classesID],['attendance.schoolyearID', $student->schoolyearID]])
             ->orderBy('attendance.monthyear','asc')
             ->get();
 
@@ -152,7 +152,6 @@ class AttendanceController extends Controller
             ];
 
             return response()->json(ResponseCode::success($data));
-            // return response()->json(ResponseCode::success($result));
         }
     }
 }
