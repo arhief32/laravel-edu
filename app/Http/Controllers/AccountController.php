@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Auth\AuthController as Auth;
+use App\Http\Controllers\StudentController as Student;
 use App\ResponseCode;
 use Illuminate\Http\Request;
 
@@ -52,11 +53,13 @@ class AccountController extends Controller
             }
             else if($request->header('userTypeID') == 4)
             {
+                $student = Student::getStudent($request);
+
                 // SELECT * FROM `invoice` WHERE `RegisterNO` = '2' AND `deleted_at` = 1 ORDER BY `invoiceID` desc
                 $result = DB::table('invoice')->select('*')
                 ->join('student','student.studentID','=','invoice.studentID')
                 ->where([
-                    ['student.RegisterNO',$request->registerNo],
+                    ['student.RegisterNO',$student->registerNO],
                     ['invoice.deleted_at','1'],
                     ['paidstatus','<>',2]
                     ])
@@ -94,8 +97,8 @@ class AccountController extends Controller
             else if($request->header('userTypeID') == 4)
             {
                 return response()->json(ResponseCode::success([
-                    'registerNo' => $request->registerNo,
-                    'name' => $request->name,
+                    'registerNo' => $student->registerNO,
+                    'name' => $student->name,
                     'sumAmount' => $sum_amount,
                     'detailInvoice' => $invoice_detail,
                 ]));
@@ -139,6 +142,8 @@ class AccountController extends Controller
             }
             else if($request->header('userTypeID') == 4)
             {
+                $student = Student::getStudent($request);
+
                 // "SELECT `payment`.*, `invoice`.`invoiceID`, `invoice`.`feetype`, `invoice`.`amount`, `studentrelation`.* 
                 // FROM `payment` 
                 // LEFT JOIN `studentrelation` ON `studentrelation`.`srstudentID` = `payment`.`studentID` 
@@ -155,7 +160,7 @@ class AccountController extends Controller
                 // ->join('studentrelation as a','payment.studentID','=','a.srstudentID')
                 // ->join('studentrelation as b','payment.schoolyearID','=','b.srschoolyearID')
                 ->join('invoice','payment.invoiceID','=','invoice.invoiceID')
-                ->where('payment.studentID',$request->studentID)
+                ->where('payment.studentID',$student->studentID)
                 // ->limit(15)
                 ->get();
             }
@@ -188,8 +193,8 @@ class AccountController extends Controller
             else if($request->header('userTypeID') == 4)
             {
                 return response()->json(ResponseCode::success([
-                    'registerNo' => $request->registerNo,
-                    'name' => $request->name,
+                    'registerNo' => $student->registerNO,
+                    'name' => $student->name,
                     'detailPayment' => $payment_detail,
                 ]));
             }
