@@ -15,7 +15,10 @@ class AuthController extends Controller
     public function getSchool()
     {
         return response()->json(ResponseCode::success(
-            DB::connection('school-gateway')->table('schooldb')->select('schoolID as school_id','database as school_name')->get()));
+            DB::connection('school-gateway')->table('schooldb')
+            ->select('schoolID as school_id','database as school_name')
+            ->where('schoolID','<>','9999')
+            ->get()));
     }
     
     public function selectDatabase($school_id)
