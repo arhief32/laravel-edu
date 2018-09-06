@@ -53,8 +53,8 @@ Route::prefix('/student')->group(function(){
 
     // Account
     Route::prefix('/account')->group(function(){
-        Route::get('/invoice');
-        Route::get('/payment-history');
+        Route::get('/invoice','AccountController@getInquiryInvoice');
+        Route::get('/payment-history','AccountController@getPaymentHistory');
     });
 
     // Announcement
@@ -94,8 +94,8 @@ Route::prefix('/parent')->group(function(){
 
     // Account
     Route::prefix('/account')->group(function(){
-        Route::get('/invoice');
-        Route::get('/payment-history');
+        Route::get('/invoice','AccountController@getInquiryInvoice');
+        Route::get('/payment-history','AccountController@getPaymentHistory');
     });
 
     // Announcement
