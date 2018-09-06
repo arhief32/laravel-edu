@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Auth\AuthController as Auth;
+use App\Http\Controllers\StudentController as Student;
 use App\ResponseCode;
 use Illuminate\Http\Request;
 
@@ -47,15 +48,13 @@ class AnnouncementController extends Controller
             }
             else if($request->header('userTypeID') == 4)
             {
+                $student = Student::getStudent($request);
+                
                 // "SELECT * FROM `notice` WHERE (
                 // SELECT schoolyearID FROM `student` where username = 'student02' limit 1
                 // ) ORDER BY `noticeID` desc"
-                $school_year_id = DB::table('student')->select('schoolyearID')
-                ->where('username', $request->username)
-                ->first();
-                
                 $result = DB::table('notice')->select('*')
-                ->where('schoolyearID', $school_year_id->schoolyearID)
+                ->where('schoolyearID', $student->schoolyearID)
                 ->orderBy('noticeID','desc')
                 ->get();
             }
@@ -104,12 +103,10 @@ class AnnouncementController extends Controller
                 // "SELECT * FROM `event` WHERE (
                 // SELECT schoolyearID FROM `student` where username = 'student02' limit 1
                 // ) ORDER BY `fdate` desc, `ftime` asc"
-                $school_year_id = DB::table('student')->select('schoolyearID')
-                ->where('username', $request->username)
-                ->first();
+                $student = Student::getStudent($request);
                 
                 $result = DB::table('event')->select('*')
-                ->where('schoolyearID', $school_year_id->schoolyearID)
+                ->where('schoolyearID', $student->schoolyearID)
                 ->orderBy('fdate','desc')
                 ->orderBy('ftime','asc')
                 ->get();
@@ -157,15 +154,14 @@ class AnnouncementController extends Controller
             }
             else if($request->header('userTypeID') == 4)
             {
+                $student = Student::getStudent($request);
+
                 // "SELECT * FROM `holiday` WHERE (
                 // SELECT schoolyearID FROM `student` where username = 'student02' limit 1
                 // ) ORDER BY `fdate` asc"
-                $school_year_id = DB::table('student')->select('schoolyearID')
-                ->where('username', $request->username)
-                ->first();
                 
                 $result = DB::table('holiday')->select('*')
-                ->where('schoolyearID', $school_year_id->schoolyearID)
+                ->where('schoolyearID', $student->schoolyearID)
                 ->orderBy('fdate','asc')
                 ->get();
             }

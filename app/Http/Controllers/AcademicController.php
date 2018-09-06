@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Auth\AuthController as Auth;
-use App\Http\Controllers\ParentController;
+use App\Http\Controllers\StudentController as Student;
 use App\ResponseCode;
 use Illuminate\Http\Request;
 
@@ -145,6 +145,8 @@ class AcademicController extends Controller
             }
             else if($request->header('userTypeID') == 4)
             {
+                $student = Student::getStudent($request);
+                
                 $result = DB::table('routine')->select('routine.*','teacher.*','classes.*','section.*','s.*','c.*')
                 ->leftJoin('teacher', 'routine.teacherID', '=', 'teacher.teacherID')
                 ->leftJoin('classes', 'routine.subjectID', '=', 'classes.classesID')
@@ -152,9 +154,9 @@ class AcademicController extends Controller
                 ->leftJoin('subject as s', 'routine.subjectID', '=', 's.subjectID')
                 ->leftJoin('subject as c', 'routine.classesID', '=', 'c.subjectID')
                 ->where([
-                    ['routine.classesID', $request->classesID],
-                    ['routine.sectionID', $request->sectionID],
-                    ['routine.schoolyearID', $request->schoolyearID],
+                    ['routine.classesID', $student->classesID],
+                    ['routine.sectionID', $student->sectionID],
+                    ['routine.schoolyearID', $student->schoolyearID],
                 ])
                 ->get();
             }
@@ -200,8 +202,8 @@ class AcademicController extends Controller
             else if($request->header('userTypeID') == 4)
             {
                 return response()->json(ResponseCode::success([
-                    'registerNo' => $request->registerNO,
-                    'name' => $request->name,
+                    'registerNo' => $student->registerNO,
+                    'name' => $student->name,
                     'routineList' => $routine_list 
                 ]));
             }
@@ -231,9 +233,11 @@ class AcademicController extends Controller
             }
             else if($request->header('userTypeID') == 4)
             {
+                $student = Student::getStudent($request);
+                
                 $result = DB::table('subject')->select('subject.*','classes.*')
                 ->leftJoin('classes', 'subject.classesID', '=', 'classes.classesID')
-                ->where('subject.classesID', $request->classesID)
+                ->where('subject.classesID', $student->classesID)
                 ->get();
             }
             else
@@ -263,8 +267,8 @@ class AcademicController extends Controller
             else if($request->header('userTypeID') == 4)
             {
                 return response()->json(ResponseCode::success([
-                    'registerNo' => $request->registerNO,
-                    'name' => $request->name,
+                    'registerNo' => $student->registerNO,
+                    'name' => $student->name,
                     'subjectList' => $subject_list,
                 ]));
             }
