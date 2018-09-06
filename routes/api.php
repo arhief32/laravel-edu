@@ -43,10 +43,8 @@ Route::prefix('/student')->group(function(){
     Route::get('/student-attendance','AttendanceController@studentAttendance');
 
     // Exam Schedule
-    Route::get('/exam-schedule');
-
-    // Mark
-    Route::get('/mark');
+    Route::get('/exam-schedule','ExamController@getExamSchedule');
+    Route::get('/exam-mark','ExamController@getExamMark');
 
     // Promo
     Route::get('/promo','PromoController@promo');
@@ -84,10 +82,8 @@ Route::prefix('/parent')->group(function(){
     Route::get('/student-attendance','AttendanceController@studentAttendanceParent');
 
     // Exam Schedule
-    Route::get('/exam-schedule');
-
-    // Mark
-    Route::get('/mark');
+    Route::get('/exam-schedule','ExamController@getExamSchedule');
+    Route::get('/exam-mark','ExamController@getExamMark');
 
     // Promo
     Route::get('/promo','PromoController@promo');
