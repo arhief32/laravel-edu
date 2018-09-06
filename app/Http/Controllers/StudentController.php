@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
-    public function selectDatabase($school_id)
+    public static function selectDatabase($school_id)
     {
         $school_db = DB::connection('school-gateway')->table('schooldb')
         ->select('*')
@@ -36,5 +36,13 @@ class StudentController extends Controller
         {
             return response()->json(ResponseCode::authorized(Auth::authorization($request)));
         }
+    }
+
+    public static function getStudent(Request $request)
+    {
+        self::selectDatabase($request->header('schoolID'));
+        $result = DB::table('student')->select('*')->where('studentID',$request->studentID)->first();
+
+        return $result;
     }
 }
