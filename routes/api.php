@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 
 Route::get('/request-inquiry','InvoiceController@requestInquiry');
 Route::post('/request-payment','InvoiceController@requestPayment');
-Route::get('/example','InvoiceController@example');
+Route::get('/example','Auth\AuthController@example');
 
 /**
  * Apps
@@ -28,16 +28,16 @@ Route::post('/login','Auth\AuthController@login');
 /**
  * Student
  */
-Route::prefix('/student')->group(function(){
+Route::prefix('/student')->middleware('student')->group(function(){
     Route::get('/profile','StudentController@profile');
     Route::get('/teacher','TeacherController@getTeacher');
 
     // Academic
-    Route::prefix('/academic')->group(function(){
+    // Route::prefix('/academic')->group(function(){
         Route::get('/subject','AcademicController@getSubject');
         Route::get('/assignment','AcademicController@getAssignment');
         Route::get('/routine','AcademicController@getRoutine');
-    });
+    // });
 
     // Student Attendance
     Route::get('/student-attendance','AttendanceController@studentAttendance');
@@ -50,32 +50,32 @@ Route::prefix('/student')->group(function(){
     Route::get('/promo','PromoController@promo');
 
     // Account
-    Route::prefix('/account')->group(function(){
+    // Route::prefix('/account')->group(function(){
         Route::get('/invoice','AccountController@getInquiryInvoice');
         Route::get('/payment-history','AccountController@getPaymentHistory');
-    });
+    // });
 
     // Announcement
-    Route::prefix('/announcement')->group(function(){
+    // Route::prefix('/announcement')->group(function(){
         Route::get('/notice','AnnouncementController@getNotice');
         Route::get('/event','AnnouncementController@getEvent');
         Route::get('/holiday','AnnouncementController@getHoliday');
-    });
+    // });
 });
 
 /**
  * Parent
  */
-Route::prefix('/parent')->group(function(){
+Route::prefix('/parent')->middleware('parent')->group(function(){
     Route::get('/profile','ParentController@profile');
     Route::get('/teacher','TeacherController@getTeacher');
 
     // Academic
-    Route::prefix('/academic')->group(function(){
+    // Route::prefix('/academic')->group(function(){
         Route::get('/subject','AcademicController@getSubject');
         Route::get('/syllabus','AcademicController@getSyllabus');
         Route::get('/routine','AcademicController@getRoutine');
-    });
+    // });
 
     // Student Attendance
     Route::get('/student-list','AttendanceController@studentList');
@@ -89,17 +89,17 @@ Route::prefix('/parent')->group(function(){
     Route::get('/promo','PromoController@promo');
 
     // Account
-    Route::prefix('/account')->group(function(){
+    // Route::prefix('/account')->group(function(){
         Route::get('/invoice','AccountController@getInquiryInvoice');
         Route::get('/payment-history','AccountController@getPaymentHistory');
-    });
+    // });
 
     // Announcement
-    Route::prefix('/announcement')->group(function(){
+    // Route::prefix('/announcement')->group(function(){
         Route::get('/notice','AnnouncementController@getNotice');
         Route::get('/event','AnnouncementController@getEvent');
         Route::get('/holiday','AnnouncementController@getHoliday');
-    });
+    // });
 });
 
 
