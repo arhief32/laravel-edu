@@ -299,9 +299,4 @@ class AuthController extends Controller
         }
 
     }
-
-    function example(Request $request)
-    {
-        return $this->hash($request->password);
-    }
 }
