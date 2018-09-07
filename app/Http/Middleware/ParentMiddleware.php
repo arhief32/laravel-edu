@@ -3,9 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\DB;
 
-class CheckStatus
+class ParentMiddleware
 {
     /**
      * Handle an incoming request.
@@ -16,6 +15,14 @@ class CheckStatus
      */
     public function handle($request, Closure $next)
     {
+        if($request->header('userTypeID') != 4)
+        {
+            return response()->json([
+                'responseCode' => '11',
+                'responseDesc' => 'Tidak ada hak akses'
+            ]);
+        }
+        
         return $next($request);
     }
 }

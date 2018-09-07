@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use App\ResponseCode;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -38,6 +39,66 @@ class AuthController extends Controller
     }
 
     /**
+     * Generate Token
+     */
+    public function generateToken()
+    {
+        $str = "";
+        $chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";	
+
+        $length = 254;
+        $size = strlen($chars);
+        for($i=0; $i<$length; $i++) 
+        {
+	    	$str .= $chars[rand(0, $size-1)];
+	    }
+
+	    return $str;
+    }
+
+    public function checkToken($username, $school_id)
+    {
+        $token = DB::connection('school-gateway')->table('token')
+        ->select('*')
+        ->where([
+            ['username',$username],
+            ['schoolID',$school_id]
+        ])
+        ->first();
+
+        if($token == true)
+        {
+            DB::connection('school-gateway')->table('token')
+            ->where([['username',$username],['schoolID',$school_id]])
+            ->update([
+                'token' => $this->generateToken(),
+                'refresh_date' => Carbon::now()
+            ]);
+        }
+        else
+        {
+            DB::connection('school-gateway')->table('token')
+            ->insert([
+                'username' => $username,
+                'schoolID' => $school_id,
+                'token'=> $this->generateToken(),
+                'create_date' => Carbon::now(),
+                'refresh_date'=> Carbon::now()
+            ]);
+        }
+
+        $token = DB::connection('school-gateway')->table('token')
+        ->select('*')
+        ->where([
+            ['username',$username],
+            ['schoolID',$school_id]
+        ])
+        ->first();
+
+        return $token;
+    }
+
+    /**
      * login
      */
     public function login(Request $request)
@@ -53,6 +114,8 @@ class AuthController extends Controller
         $username = $request->username;
         $password = $this->hash($request->password);
 
+        $this->selectDatabase($request->header('schoolID'));
+        
         // modify database select dynamically
         config(['database.connections.mysql' => [
             'driver' => 'mysql',
@@ -64,27 +127,37 @@ class AuthController extends Controller
 
         // mencari dan mencocokkan value ke database
         $validate_auth_student = DB::table('student')
-        ->select('username','password','usertypeID')
+        ->select('username','password as token','usertypeID')
         ->where([['username',$username],['password',$password]])
         ->first();
 
         $validate_auth_parent = DB::table('parents')
-        ->select('username','password','usertypeID')
+        ->select('username','password as token','usertypeID')
         ->where([['username',$username],['password',$password]])
         ->first();
         
         // response
         if($validate_auth_student == true && $validate_auth_parent == false)
         {
-            $validate_auth_student->schoolID = $request->schoolID;
+            $token = $this->checkToken($username, $request->schoolID);     
             
-            return response()->json(ResponseCode::login_success($validate_auth_student));
+            return response()->json(ResponseCode::login_success([
+                'username' => $token->username,
+                'token' => $token->token,
+                'schoolID' => $token->schoolID,
+                'userTypeID' => $validate_auth_student->usertypeID
+            ]));
         }
         else if($validate_auth_student == false && $validate_auth_parent == true)
         {
-            $validate_auth_parent->schoolID = $request->schoolID;
+            $token = $this->checkToken($username, $request->schoolID);     
             
-            return response()->json(ResponseCode::login_success($validate_auth_parent));
+            return response()->json(ResponseCode::login_success([
+                'username' => $token->username,
+                'token' => $token->token,
+                'schoolID' => $token->schoolID,
+                'userTypeID' => $validate_auth_parent->usertypeID
+            ]));
         }
         else
         {
@@ -100,7 +173,7 @@ class AuthController extends Controller
         // mengecek value untuk authentication
         if($request->header('schoolID') == '' ||
         $request->header('username') == '' ||
-        $request->header('password') == '' ||
+        $request->header('token') == '' ||
         $request->header('userTypeID') == '')
         {
             return false;
@@ -108,68 +181,127 @@ class AuthController extends Controller
 
         // define variable
         $username = $request->header('username');
-        $password = $request->header('password');
+        $token = $request->header('token');
         $user_type_id = $request->header('userTypeID');
         $school_db = (new self)->selectDatabase($request->header('schoolID'));
 
-        // modify database connection dynamically
-        config(['database.connections.mysql' => [
-            'driver' => 'mysql',
-            'host' => $school_db->hostname,
-            'database' => $school_db->database,
-            'username' => $school_db->username,
-            'password' => $school_db->password
-        ]]);
+        $select_token = DB::connection('school-gateway')->table('token')
+        ->where([
+            ['username', $username],
+            ['token', $token]
+        ])->first();
 
-        // validasi auth
-        if($school_db == false)
+        // return $select_token;
+
+        if($select_token == false)
         {
             return false;
-        }
-        
-        $check_student_auth = '';
-        $check_parent_auth = '';
-        
-        if($user_type_id == 3)
-        {
-            $check_student_auth = DB::table('student')
-            ->select('*')
-            ->where([['username',$username],['password',$password],['usertypeID',$user_type_id]])
-            ->first();
-            
-            if($check_student_auth == false )
-            {
-                return false;
-            }
-            else
-            {
-                $check_student_auth->parents = DB::table('parents')
-                ->select('*')
-                ->where('parentsID',$check_student_auth->parentID)
-                ->first();
-            }
-        }
-
-        if($user_type_id == 4)
-        {
-            $check_parent_auth = DB::table('parents')
-            ->select('*')
-            ->where([['username',$username],['password',$password],['usertypeID',$user_type_id]])
-            ->first();
-        }
-
-        // response
-        if($check_student_auth == true)
-        {
-            return $check_student_auth;
-        }
-        elseif($check_parent_auth == true)
-        {
-            return $check_parent_auth;
         }
         else
         {
-            return false;
+            // modify database connection dynamically
+            config(['database.connections.mysql' => [
+                'driver' => 'mysql',
+                'host' => $school_db->hostname,
+                'database' => $school_db->database,
+                'username' => $school_db->username,
+                'password' => $school_db->password
+            ]]);
+    
+            // validasi auth
+            if($school_db == false)
+            {
+                return false;
+            }
+            
+            $check_student_auth = '';
+            $check_parent_auth = '';
+            
+            if($user_type_id == 3)
+            {
+                $check_student_auth = DB::table('student')
+                ->select(
+                    'studentID',
+                    'name',
+                    'dob',
+                    'sex',
+                    'religion',
+                    'email',
+                    'phone',
+                    'address',
+                    'classesID',
+                    'sectionID',
+                    'roll',
+                    'bloodgroup',
+                    'country',
+                    'registerNO',
+                    'state',
+                    'library',
+                    'hostel',
+                    'transport',
+                    'photo',
+                    'parentID',
+                    'createschoolyearID',
+                    'schoolyearID',
+                    'username',
+                    'usertypeID',
+                    'create_date',
+                    'modify_date',
+                    'create_userID',
+                    'create_username',
+                    'create_usertype',
+                    'active'
+                )
+                ->where('username',$username)
+                ->first();
+            }
+    
+            if($user_type_id == 4)
+            {
+                $check_parent_auth = DB::table('parents')
+                ->select(
+                    'parentsID',
+                    'name',
+                    'father_name',
+                    'mother_name',
+                    'father_profession',
+                    'mother_profession',
+                    'email',
+                    'phone',
+                    'address',
+                    'photo',
+                    'username',
+                    'usertypeID',
+                    'create_date',
+                    'modify_date',
+                    'create_userID',
+                    'create_username',
+                    'create_usertype',
+                    'active'
+                )
+                ->where('username',$username)
+                ->first();
+            }
+    
+            // response
+            if($check_student_auth == true)
+            {
+                return $check_student_auth;
+            }
+            elseif($check_parent_auth == true)
+            {
+                return $check_parent_auth;
+            }
+            else
+            {
+                return false;
+            }
         }
+
+    }
+
+    function example(Request $request)
+    {
+        return $this->hash($request->password);
     }
 }
