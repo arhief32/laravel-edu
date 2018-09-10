@@ -39,6 +39,35 @@ class AuthController extends Controller
     }
 
     /**
+     * Decrypted password
+     */
+    public static function encrypt_decrypt($action, $string)
+    {
+        $output = false;
+        $encrypt_method = "AES-256-CBC";
+        $secret_key = 'ceca0623e7992c1620c7372408b6f41d';
+        $secret_iv = 'S3cr3tP@ssw0rdBRIEDUPEPKJT';
+        $key = hash('sha256', $secret_key);    
+        $iv = substr(hash('sha256', $secret_iv), 0, 16);
+        
+        if($action == 'encrypt') 
+        {
+            $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
+            $output = base64_encode($output);
+
+            return $output;
+        } 
+        else if( $action == 'decrypt')
+        {
+            $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
+            $output = explode('|',$output);
+            $output = $output[1];
+
+            return $output;
+        }
+    }
+
+    /**
      * Generate Token
      */
     public function generateToken()
@@ -122,7 +151,7 @@ class AuthController extends Controller
             'host' => $school_db->hostname,
             'database' => $school_db->database,
             'username' => $school_db->username,
-            'password' => $school_db->password
+            'password' => $this->encrypt_decrypt('decrypt', $school_db->password)
         ]]);
 
         // mencari dan mencocokkan value ke database
@@ -207,7 +236,7 @@ class AuthController extends Controller
                 'host' => $school_db->hostname,
                 'database' => $school_db->database,
                 'username' => $school_db->username,
-                'password' => $school_db->password
+                'password' => (new self)->encrypt_decrypt('decrypt', $school_db->password)
             ]]);
     
             // validasi auth
@@ -233,7 +262,6 @@ class AuthController extends Controller
                     'address',
                     'classesID',
                     'sectionID',
-                    'roll',
                     'bloodgroup',
                     'country',
                     'registerNO',
@@ -349,39 +377,17 @@ class AuthController extends Controller
         return $main_menu;
     }
 
-    public function encrypt_decrypt($action, $string)
-    {
-        $output = false;
-        $encrypt_method = "AES-256-CBC";
-        $secret_key = 'ceca0623e7992c1620c7372408b6f41d';
-        $secret_iv = 'S3cr3tP@ssw0rdBRIEDUPEPKJT';
-        $key = hash('sha256', $secret_key);    
-        $iv = substr(hash('sha256', $secret_iv), 0, 16);
-        
-        if($action == 'encrypt') 
-        {
-            $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
-            $output = base64_encode($output);
-
-            return $output;
-        } 
-        else if( $action == 'decrypt')
-        {
-            $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
-
-            return $output;
-        }
-    }
     
     public function example(Request $request)
     {
-        $plain_txt = $request->password;
-        $encrypted_txt = $this->encrypt_decrypt('encrypt', $plain_txt);
-        $decrypted_txt = $this->encrypt_decrypt('decrypt', $encrypted_txt);
+        $plain_txt = DB::connection('school-gateway')->table('schooldb')->select('password')->where('schoolID', $request->schoolID)->first();
+        // $plain_txt = '0001|P@ssw0rd';
+        // $encrypted_txt = $this->encrypt_decrypt('encrypt', $plain_txt->password);
+        $decrypted_txt = $this->encrypt_decrypt('decrypt', $plain_txt->password);
 
         return [
             'plain_text' => $plain_txt,
-            'encrypted_text' => $encrypted_txt,
+            // 'encrypted_text' => $encrypted_txt,
             'decrypted_text' => $decrypted_txt,
         ];
     }
