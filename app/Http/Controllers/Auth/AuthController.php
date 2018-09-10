@@ -145,7 +145,8 @@ class AuthController extends Controller
                 'username' => $token->username,
                 'token' => $token->token,
                 'schoolID' => $token->schoolID,
-                'userTypeID' => $validate_auth_student->usertypeID
+                'userTypeID' => $validate_auth_student->usertypeID,
+                'listMenu' => $this->listMenu($validate_auth_student->usertypeID),
             ]));
         }
         else if($validate_auth_student == false && $validate_auth_parent == true)
@@ -156,7 +157,8 @@ class AuthController extends Controller
                 'username' => $token->username,
                 'token' => $token->token,
                 'schoolID' => $token->schoolID,
-                'userTypeID' => $validate_auth_parent->usertypeID
+                'userTypeID' => $validate_auth_parent->usertypeID,
+                'listMenu' => $this->listMenu($validate_auth_parent->usertypeID),
             ]));
         }
         else
@@ -298,5 +300,89 @@ class AuthController extends Controller
             }
         }
 
+    }
+
+    public function listMenu($user_type_id)
+    {
+        // select * from permissions a join mobile_permission_relationships b on a.permissionID = b.permission_id
+        // left join menu c on a.name = c.link
+        // WHERE b.usertype_id = '4' and c.status = '1'
+        $result = DB::table('permissions')->select('*')
+        ->join('mobile_permission_relationships','permissions.permissionID','=','mobile_permission_relationships.permission_id')
+        ->leftJoin('menu','permissions.name','=','menu.link')
+        ->where([
+            ['mobile_permission_relationships.usertype_id', $user_type_id],
+            ['menu.status', 1]
+        ])
+        ->get();
+
+        $main_menu_id = $main_menu = $sub_menu = [];
+        foreach($result as $menu)
+        {
+            array_push($main_menu_id, $menu->parentID);
+        }
+        array_unshift($main_menu_id, 1); array_push($main_menu_id, 121);
+        $main_menu_id = array_values(array_unique($main_menu_id));
+
+        foreach($main_menu_id as $menu)
+        {
+            if($menu != 0)
+            {
+                $menu_list = DB::table('menu')->select('*')
+                ->where('menu.menuID', $menu)
+                ->first();
+
+                $menu_list->subMenu = DB::table('permissions')->select('*')
+                ->join('mobile_permission_relationships','permissions.permissionID','=','mobile_permission_relationships.permission_id')
+                ->leftJoin('menu','permissions.name','=','menu.link')
+                ->where([
+                    ['mobile_permission_relationships.usertype_id', $user_type_id],
+                    ['menu.parentID', $menu],
+                    ['menu.status', 1]
+                ])
+                ->get();
+
+                array_push($main_menu, (object)$menu_list);
+            }
+        }
+
+        return $main_menu;
+    }
+
+    public function encrypt_decrypt($action, $string)
+    {
+        $output = false;
+        $encrypt_method = "AES-256-CBC";
+        $secret_key = 'ceca0623e7992c1620c7372408b6f41d';
+        $secret_iv = 'S3cr3tP@ssw0rdBRIEDUPEPKJT';
+        $key = hash('sha256', $secret_key);    
+        $iv = substr(hash('sha256', $secret_iv), 0, 16);
+        
+        if($action == 'encrypt') 
+        {
+            $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
+            $output = base64_encode($output);
+
+            return $output;
+        } 
+        else if( $action == 'decrypt')
+        {
+            $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
+
+            return $output;
+        }
+    }
+    
+    public function example(Request $request)
+    {
+        $plain_txt = $request->password;
+        $encrypted_txt = $this->encrypt_decrypt('encrypt', $plain_txt);
+        $decrypted_txt = $this->encrypt_decrypt('decrypt', $encrypted_txt);
+
+        return [
+            'plain_text' => $plain_txt,
+            'encrypted_text' => $encrypted_txt,
+            'decrypted_text' => $decrypted_txt,
+        ];
     }
 }
