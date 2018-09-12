@@ -42,7 +42,20 @@ class TeacherController extends Controller
                 // SELECT teacherID FROM `subject` WHERE `classesID` = '1'
                 // )
                 // ORDER BY name asc"
-                $result = DB::table('teacher')->select('*')
+                $result = DB::table('teacher')->select(
+                    'teacherID',
+                    'name',
+                    'designation',
+                    'dob',
+                    'sex',
+                    'religion',
+                    'email',
+                    'phone',
+                    'address',
+                    'jod',
+                    'photo'
+                )
+                ->where('active', 1)
                 ->whereIn('teacherID', 
                     DB::table('subject')
                     ->select('teacherID')
@@ -59,7 +72,20 @@ class TeacherController extends Controller
                 // SELECT classesID FROM `student` LEFT JOIN `studentextend` ON `studentextend`.`studentID` = `student`.`studentID` WHERE `student`.`parentID` = '4' )
                 // )
                 // ORDER BY name asc"
-                $result = DB::table('teacher')->select('*')
+                $result = DB::table('teacher')->select(
+                    'teacherID',
+                    'name',
+                    'designation',
+                    'dob',
+                    'sex',
+                    'religion',
+                    'email',
+                    'phone',
+                    'address',
+                    'jod',
+                    'photo'
+                )
+                ->where('active', 1)
                 ->whereIn('teacherID', 
                     DB::table('subject')
                     ->select('teacherID')
