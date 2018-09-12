@@ -30,7 +30,7 @@ class PromoController extends Controller
                 array_push($result_v2, [
                     'promoID' => $promo->promoID,
                     'type' => $promo->type,
-                    'photo' => 'http://'.$_SERVER['HTTP_HOST'].'/PUB_IMAGE/promo/'.$promo->type.'/'.$promo->photo,
+                    'photo' => 'http://172.18.133.135:81/PUB_IMAGE/promo/'. strtolower($promo->type) . '/'.$promo->photo,
                     'info' => $promo->info,
                     'active' => $promo->active,
                     'title' => $promo->title,
