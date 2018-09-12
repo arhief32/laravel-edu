@@ -104,6 +104,11 @@ class TeacherController extends Controller
                 return Response()->json(ResponseCode::failed());
             }
 
+            foreach($result as $teacher)
+            {
+                $teacher->photo = 'http://172.18.133.135:81/BRI-SmartSchool/uploads/images/'.$teacher->photo;
+            }
+
             return response()->json(ResponseCode::success($result));
         }
     }
