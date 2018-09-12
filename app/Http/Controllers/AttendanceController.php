@@ -41,10 +41,45 @@ class AttendanceController extends Controller
             
             // "SELECT * FROM `student` LEFT JOIN `studentextend` ON `studentextend`.`studentID` = `student`.`studentID` 
             // WHERE `student`.`parentID` = 'xxx' ORDER BY `roll` asc"
-            $result = DB::table('student')->select('*')
+            $result = DB::table('student')->select(
+                'student.studentID',
+                'student.name',
+                'student.dob',
+                'student.sex',
+                'student.religion',
+                'student.email',
+                'student.phone',
+                'student.address',
+                'student.classesID',
+                'student.sectionID',
+                'student.bloodgroup',
+                'student.country',
+                'student.registerNO',
+                'student.state',
+                'student.library',
+                'student.hostel',
+                'student.transport',
+                'student.photo',
+                'student.parentID',
+                'student.createschoolyearID',
+                'student.schoolyearID',
+                'student.username',
+                'student.usertypeID',
+                'student.create_date',
+                'student.modify_date',
+                'student.create_userID',
+                'student.create_username',
+                'student.create_usertype',
+                'student.active',
+                'studentextend.studentextendID',
+                'studentextend.studentgroupID',
+                'studentextend.optionalsubjectID',
+                'studentextend.extracurricularactivities',
+                'studentextend.remarks'
+            )
             ->leftJoin('studentextend', 'studentextend.studentID', '=', 'student.studentID')
             ->where('student.parentID', $auth->parentsID)
-            ->orderBy('student.roll','asc')
+            ->orderBy('student.registerNO','asc')
             ->get();
             
             return response()->json(ResponseCode::success($result));
