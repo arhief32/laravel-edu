@@ -84,6 +84,12 @@ class AccountController extends Controller
             }
             
             $sum_amount = array_sum($sum_amount);
+
+            $briva_code = DB::connection('school-gateway')
+            ->table('schooldb')
+            ->select('*')
+            ->where('schoolID', $request->header('schoolID'))
+            ->first();
             
             if($request->header('userTypeID') == 3)
             {
@@ -91,6 +97,7 @@ class AccountController extends Controller
                     'registerNo' => $auth->registerNO,
                     'name' => $auth->name,
                     'sumAmount' => $sum_amount,
+                    'brivaNumber' => $briva_code->brivaNo . $briva_code->schoolID . $auth->registerNO,
                     'detailInvoice' => $invoice_detail,
                 ]));
             }
@@ -100,6 +107,7 @@ class AccountController extends Controller
                     'registerNo' => $student->registerNO,
                     'name' => $student->name,
                     'sumAmount' => $sum_amount,
+                    'brivaNumber' => $briva_code->brivaNo . $briva_code->schoolID . $student->registerNO,
                     'detailInvoice' => $invoice_detail,
                 ]));
             }
@@ -182,11 +190,18 @@ class AccountController extends Controller
                 ]);
             }
             
+            $briva_code = DB::connection('school-gateway')
+            ->table('schooldb')
+            ->select('*')
+            ->where('schoolID', $request->header('schoolID'))
+            ->first();
+            
             if($request->header('userTypeID') == 3)
             {
                 return response()->json(ResponseCode::success([
                     'registerNo' => $auth->registerNO,
                     'name' => $auth->name,
+                    'brivaNumber' => $briva_code->brivaNo . $briva_code->schoolID . $auth->registerNO,
                     'detailPayment' => $payment_detail,
                 ]));
             }
@@ -195,6 +210,7 @@ class AccountController extends Controller
                 return response()->json(ResponseCode::success([
                     'registerNo' => $student->registerNO,
                     'name' => $student->name,
+                    'brivaNumber' => $briva_code->brivaNo . $briva_code->schoolID . $student->registerNO,
                     'detailPayment' => $payment_detail,
                 ]));
             }
