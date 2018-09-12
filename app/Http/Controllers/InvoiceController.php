@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Auth\AuthController as Auth;
 use Carbon\Carbon;
 
 class InvoiceController extends Controller
@@ -31,7 +32,7 @@ class InvoiceController extends Controller
             'host' => $school_db->hostname,
             'database' => $school_db->database,
             'username' => $school_db->username,
-            'password' => $school_db->password
+            'password' => Auth::encrypt_decrypt('decrypt' ,$school_db->password)
         ]]);
 
         // SELECT * FROM `invoice` WHERE `RegisterNO` = '2' AND `deleted_at` = 1 ORDER BY `invoiceID` desc
@@ -62,7 +63,7 @@ class InvoiceController extends Controller
             'host' => $school_db->hostname,
             'database' => $school_db->database,
             'username' => $school_db->username,
-            'password' => $school_db->password
+            'password' => Auth::encrypt_decrypt('decrypt' ,$school_db->password)
         ]]);
 
         if($payments == false)
