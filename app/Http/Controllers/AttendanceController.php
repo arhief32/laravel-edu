@@ -78,18 +78,24 @@ class AttendanceController extends Controller
             {
                 $month_year = $attendance->monthyear;
                 
-                $details = [
+                $details_v1 = [
                     $attendance->a1,    $attendance->a2,    $attendance->a3,    $attendance->a4,    $attendance->a5,    $attendance->a6,    $attendance->a7,    $attendance->a8,    $attendance->a9,    $attendance->a10,
                     $attendance->a11,   $attendance->a12,   $attendance->a13,   $attendance->a14,   $attendance->a15,   $attendance->a16,   $attendance->a17,   $attendance->a18,   $attendance->a19,   $attendance->a20,
                     $attendance->a21,   $attendance->a22,   $attendance->a23,   $attendance->a24,   $attendance->a25,   $attendance->a26,   $attendance->a27,   $attendance->a28,   $attendance->a29,   $attendance->a30,
                     $attendance->a31
                 ];
+
+                $details_v2 = [];
+                foreach ($details_v1 as $detail)
+                {
+                    $detail == null ? array_push($details_v2, '-') : array_push($details_v2, $detail);
+                }
                 
                 // $details = implode('|',$details);
                 array_push($attendances, 
                 [
                     'monthyear' => $month_year,
-                    'detail' => $details
+                    'detail' => $details_v2
                 ]);
             }
 
@@ -130,18 +136,24 @@ class AttendanceController extends Controller
             {
                 $month_year = $attendance->monthyear;
                 
-                $details = [
+                $details_v1 = [
                     $attendance->a1,    $attendance->a2,    $attendance->a3,    $attendance->a4,    $attendance->a5,    $attendance->a6,    $attendance->a7,    $attendance->a8,    $attendance->a9,    $attendance->a10,
                     $attendance->a11,   $attendance->a12,   $attendance->a13,   $attendance->a14,   $attendance->a15,   $attendance->a16,   $attendance->a17,   $attendance->a18,   $attendance->a19,   $attendance->a20,
                     $attendance->a21,   $attendance->a22,   $attendance->a23,   $attendance->a24,   $attendance->a25,   $attendance->a26,   $attendance->a27,   $attendance->a28,   $attendance->a29,   $attendance->a30,
                     $attendance->a31
                 ];
+
+                $details_v2 = [];
+                foreach ($details_v1 as $detail)
+                {
+                    $detail == null ? array_push($details_v2, '-') : array_push($details_v2, $detail);
+                }
                 
                 // $details = implode('|',$details);
                 array_push($attendances, 
                 [
                     'monthyear' => $month_year,
-                    'detail' => $details
+                    'detail' => $details_v2
                 ]);
             }
 

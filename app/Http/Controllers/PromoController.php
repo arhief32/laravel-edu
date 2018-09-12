@@ -20,7 +20,9 @@ class PromoController extends Controller
         else
         {
             // "SELECT * FROM `promo`;
-            $result = DB::connection('school-gateway')->table('promo')->select('*')->get();
+            $result = DB::connection('school-gateway')->table('promo')->select('*')
+            ->where('active', 1)
+            ->get();
             
             return response()->json(ResponseCode::success($result));
         }
