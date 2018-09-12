@@ -43,44 +43,23 @@ class AttendanceController extends Controller
             // WHERE `student`.`parentID` = 'xxx' ORDER BY `roll` asc"
             $result = DB::table('student')->select(
                 'student.studentID',
-                'student.name',
-                'student.dob',
-                'student.sex',
-                'student.religion',
-                'student.email',
-                'student.phone',
-                'student.address',
-                'student.classesID',
-                'student.sectionID',
-                'student.bloodgroup',
-                'student.country',
                 'student.registerNO',
-                'student.state',
-                'student.library',
-                'student.hostel',
-                'student.transport',
-                'student.photo',
-                'student.parentID',
-                'student.createschoolyearID',
-                'student.schoolyearID',
-                'student.username',
-                'student.usertypeID',
-                'student.create_date',
-                'student.modify_date',
-                'student.create_userID',
-                'student.create_username',
-                'student.create_usertype',
-                'student.active',
-                'studentextend.studentextendID',
-                'studentextend.studentgroupID',
-                'studentextend.optionalsubjectID',
-                'studentextend.extracurricularactivities',
-                'studentextend.remarks'
+                'classes.classes',
+                'section.section',
+                'student.name',
+                'student.photo'
             )
             ->leftJoin('studentextend', 'studentextend.studentID', '=', 'student.studentID')
+            ->leftJoin('classes', 'student.classesID', '=', 'classes.classesID')
+            ->leftJoin('section', 'student.sectionID', '=', 'section.sectionID')
             ->where('student.parentID', $auth->parentsID)
             ->orderBy('student.registerNO','asc')
             ->get();
+
+            foreach($result as $student)
+            {
+                $student->photo = 'http://172.18.133.135:81/BRI-SmartSchool/uploads/images/'.$student->photo;
+            }
             
             return response()->json(ResponseCode::success($result));
         }
