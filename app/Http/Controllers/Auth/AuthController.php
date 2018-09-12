@@ -284,6 +284,8 @@ class AuthController extends Controller
                 )
                 ->where('username',$username)
                 ->first();
+
+                $check_student_auth->photo = 'http://172.18.133.135:81/BRI-SmartSchool/uploads/images/'.$check_student_auth->photo;
             }
     
             if($user_type_id == 4)
@@ -311,6 +313,8 @@ class AuthController extends Controller
                 )
                 ->where('username',$username)
                 ->first();
+
+                $check_parent_auth->photo = 'http://172.18.133.135:81/BRI-SmartSchool/uploads/images/'.$check_parent_auth->photo;
             }
     
             // response
