@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\AuthController as Auth;
 use App\Http\Controllers\StudentController as Student;
 use App\ResponseCode;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class AnnouncementController extends Controller
 {
@@ -129,6 +130,43 @@ class AnnouncementController extends Controller
             }
 
             return response()->json(ResponseCode::success(['eventDetail' => $event_detail]));
+        }
+    }
+
+    public function flagEvent(Request $request)
+    {
+        $auth = Auth::authorization($request);
+
+        if($auth == false)
+        {
+            return response()->json(ResponseCode::unauthorized());
+        }
+        else
+        {
+            $this->selectDatabase($request->header('schoolID'));
+            
+            if($request->header('userTypeID') == true)
+            {
+                $request->header('userTypeID') == 3 ? $type = 'Student' : $type = 'Parents';
+
+                // SELECT * FROM `event` WHERE `schoolyearID` = '1' ORDER BY `fdate` desc, `ftime` asc
+                $result = DB::table('eventcounter')
+                ->insert([
+                    'eventID' => $request->eventID,
+                    'username' => $auth->username,
+                    'type' => $type,
+                    'name' => $auth->name,
+                    'photo' => $request->photo,
+                    'status' => $request->status,
+                    'create_date' => Carbon::now()
+                ]);
+            }
+            else
+            {
+                return Response()->json(ResponseCode::failed());
+            }
+
+            return response()->json(ResponseCode::success(''));
         }
     }
 

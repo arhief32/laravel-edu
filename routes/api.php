@@ -59,6 +59,7 @@ Route::prefix('/student')->middleware('student')->group(function(){
     // Route::prefix('/announcement')->group(function(){
         Route::get('/notice','AnnouncementController@getNotice');
         Route::get('/event','AnnouncementController@getEvent');
+        Route::post('/flag-event','AnnouncementController@flagEvent');
         Route::get('/holiday','AnnouncementController@getHoliday');
     // });
 });
@@ -98,6 +99,7 @@ Route::prefix('/parent')->middleware('parent')->group(function(){
     // Route::prefix('/announcement')->group(function(){
         Route::get('/notice','AnnouncementController@getNotice');
         Route::get('/event','AnnouncementController@getEvent');
+        Route::post('/flag-event','AnnouncementController@flagEvent');
         Route::get('/holiday','AnnouncementController@getHoliday');
     // });
 });
