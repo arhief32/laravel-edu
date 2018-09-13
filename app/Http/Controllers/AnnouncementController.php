@@ -156,9 +156,9 @@ class AnnouncementController extends Controller
                     'username' => $auth->username,
                     'type' => $type,
                     'name' => $auth->name,
-                    'photo' => $request->photo,
-                    'status' => $request->status,
-                    'create_date' => Carbon::now()
+                    'photo' => $auth->photo,
+                    'status' => 1,
+                    'create_date' => Carbon::now('Asia/Jakarta')
                 ]);
             }
             else
