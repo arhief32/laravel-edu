@@ -101,7 +101,7 @@ class AuthController extends Controller
             ->where([['username',$username],['schoolID',$school_id]])
             ->update([
                 'token' => $this->generateToken(),
-                'refresh_date' => Carbon::now()
+                'refresh_date' => Carbon::now('Asia/jakarta')
             ]);
         }
         else
@@ -111,8 +111,8 @@ class AuthController extends Controller
                 'username' => $username,
                 'schoolID' => $school_id,
                 'token'=> $this->generateToken(),
-                'create_date' => Carbon::now(),
-                'refresh_date'=> Carbon::now()
+                'create_date' => Carbon::now('Asia/jakarta'),
+                'refresh_date'=> Carbon::now('Asia/jakarta')
             ]);
         }
 
