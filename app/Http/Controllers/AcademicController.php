@@ -130,73 +130,85 @@ class AcademicController extends Controller
             // WHERE `routine`.`classesID` = '1' AND `routine`.`sectionID` = '1' AND `routine`.`schoolyearID` = '1'"
             if($request->header('userTypeID') == 3)
             {
-                $result = DB::table('routine')->select('routine.*','teacher.*','classes.*','section.*','s.*','c.*')
-                ->leftJoin('teacher', 'routine.teacherID', '=', 'teacher.teacherID')
-                ->leftJoin('classes', 'routine.subjectID', '=', 'classes.classesID')
-                ->leftJoin('section', 'routine.sectionID', '=', 'section.sectionID')
-                ->leftJoin('subject as s', 'routine.subjectID', '=', 's.subjectID')
-                ->leftJoin('subject as c', 'routine.classesID', '=', 'c.subjectID')
+                $days = DB::table('routine')->select('day')->distinct()
                 ->where([
-                    ['routine.classesID', $auth->classesID],
-                    ['routine.sectionID', $auth->sectionID],
-                    ['routine.schoolyearID', $auth->schoolyearID],
+                    ['classesID', $auth->classesID],
+                    ['sectionID', $auth->sectionID],
+                    ['schoolyearID', $auth->schoolyearID],
                 ])
                 ->get();
+
+                $routine_list = [];
+                foreach($days as $day)
+                {
+                    $routine = DB::table('routine')
+                    ->select('routine.start_time','routine.end_time','routine.room','teacher.designation','teacher.name')
+                    ->leftJoin('teacher', 'routine.teacherID', '=', 'teacher.teacherID')
+                    ->leftJoin('classes', 'routine.subjectID', '=', 'classes.classesID')
+                    ->leftJoin('section', 'routine.sectionID', '=', 'section.sectionID')
+                    ->leftJoin('subject as s', 'routine.subjectID', '=', 's.subjectID')
+                    ->leftJoin('subject as c', 'routine.classesID', '=', 'c.subjectID')
+                    ->where([
+                        ['routine.day', $day->day],
+                        ['routine.classesID', $auth->classesID],
+                        ['routine.sectionID', $auth->sectionID],
+                        ['routine.schoolyearID', $auth->schoolyearID],
+                    ])
+                    ->get();
+
+                    array_push($routine_list, [
+                        'day' => $day->day, 
+                        'details' => $routine
+                    ]);
+                }
             }
             else if($request->header('userTypeID') == 4)
             {
                 $student = Student::getStudent($request);
                 
-                $result = DB::table('routine')->select('routine.*','teacher.*','classes.*','section.*','s.*','c.*')
-                ->leftJoin('teacher', 'routine.teacherID', '=', 'teacher.teacherID')
-                ->leftJoin('classes', 'routine.subjectID', '=', 'classes.classesID')
-                ->leftJoin('section', 'routine.sectionID', '=', 'section.sectionID')
-                ->leftJoin('subject as s', 'routine.subjectID', '=', 's.subjectID')
-                ->leftJoin('subject as c', 'routine.classesID', '=', 'c.subjectID')
+                $days = DB::table('routine')->select('day')->distinct()
                 ->where([
-                    ['routine.classesID', $student->classesID],
-                    ['routine.sectionID', $student->sectionID],
-                    ['routine.schoolyearID', $student->schoolyearID],
+                    ['classesID', $student->classesID],
+                    ['sectionID', $student->sectionID],
+                    ['schoolyearID', $student->schoolyearID],
                 ])
                 ->get();
+                
+                $routine_list = [];
+                foreach($days as $day)
+                {
+                    $routine = DB::table('routine')
+                    ->select('routine.start_time','routine.end_time','routine.room','teacher.designation','teacher.name')
+                    ->leftJoin('teacher', 'routine.teacherID', '=', 'teacher.teacherID')
+                    ->leftJoin('classes', 'routine.subjectID', '=', 'classes.classesID')
+                    ->leftJoin('section', 'routine.sectionID', '=', 'section.sectionID')
+                    ->leftJoin('subject as s', 'routine.subjectID', '=', 's.subjectID')
+                    ->leftJoin('subject as c', 'routine.classesID', '=', 'c.subjectID')
+                    ->where([
+                        ['routine.day', $day->day],
+                        ['routine.classesID', $student->classesID],
+                        ['routine.sectionID', $student->sectionID],
+                        ['routine.schoolyearID', $student->schoolyearID],
+                    ])
+                    ->get();
+
+                    array_push($routine_list, [
+                        'day' => $day->day, 
+                        'details' => $routine
+                    ]);
+                }
             }
             else
             {
                 return Response()->json(ResponseCode::failed());
             }
 
-            $routine_list = $routine_day = [];
-
-            foreach($result as $routine)
-            {
-                array_push($routine_day, $routine->day);
-            }
-            $routine_day = array_values(array_unique($routine_day));
-            foreach($routine_day as $day_name)
-            {
-                $day = [];
-                foreach($result as $routine)
-                {
-                    if($routine->day === $day_name)
-                    {
-                        array_push($day, [
-                            'start_time' => $routine->start_time,
-                            'end_time' => $routine->end_time,
-                            'room' => $routine->room,
-                            'designation' => $routine->designation,
-                            'name' => $routine->name,
-                        ]);
-                    }
-                }
-                array_push($routine_list, [$day_name => $day]);
-            }
-            
             if($request->header('userTypeID') == 3)
             {
                 return response()->json(ResponseCode::success([
                     'registerNo' => $auth->registerNO,
                     'name' => $auth->name,
-                    'routineList' => $routine_list 
+                    'routineList' => $routine_list,
                 ]));
             }
             else if($request->header('userTypeID') == 4)
