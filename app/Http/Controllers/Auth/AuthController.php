@@ -39,7 +39,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Decrypted password
+     * Encrypt/Decrypt password
      */
     public static function encrypt_decrypt($action, $string)
     {
