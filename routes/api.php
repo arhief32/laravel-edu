@@ -13,10 +13,10 @@ use Illuminate\Support\Facades\DB;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::post('/registration-company','RegistrationController@register');
 
 Route::get('/request-inquiry','InvoiceController@requestInquiry');
 Route::post('/request-payment','InvoiceController@requestPayment');
-Route::get('/example','Auth\AuthController@example');
 
 /**
  * Apps
@@ -103,8 +103,3 @@ Route::prefix('/parent')->middleware('parent')->group(function(){
         Route::get('/holiday','AnnouncementController@getHoliday');
     // });
 });
-
-
-
-
-Route::post('example','Auth\AuthController@example');
