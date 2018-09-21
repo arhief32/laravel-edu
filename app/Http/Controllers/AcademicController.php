@@ -156,10 +156,11 @@ class AcademicController extends Controller
                     ])
                     ->get();
 
+                    
                     array_push($routine_list, [
                         'day' => $day->day, 
                         'details' => $routine
-                    ]);
+                        ]);
                 }
             }
             else if($request->header('userTypeID') == 4)
@@ -201,6 +202,19 @@ class AcademicController extends Controller
             else
             {
                 return Response()->json(ResponseCode::failed());
+            }
+
+            foreach($routine_list as $routine)
+            {
+                $days = ['MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+
+                foreach($days as $day)
+                {
+                    $routine['day'] != $day ? array_push($routine_list, [
+                        'day' => $day,
+                        'details' => []
+                        ]) : false;
+                }
             }
 
             if($request->header('userTypeID') == 3)
