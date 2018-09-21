@@ -72,12 +72,32 @@ class RegistrationController extends Controller
         response()->json([
             'status' => 'success',
             'message' => [
-                'corporate_code' => $get_school_id
+                'company_code' => $get_school_id
             ]
         ])
         :
         response()->json([
             'status' => 'gagal'
+        ]);
+    }
+
+    public function deleteRegister(Request $request)
+    {
+        $school_id = $request->company_code;
+
+        // delete from schooldb where schoolid = 'newSchoolID '
+        // drop database school[newSchoolID]
+        $delete_row = DB::connection('school-gateway')->table('schooldb')
+        ->where('schoolID', $school_id)
+        ->delete();
+        
+        return $delete_row == true ? response()->json([
+            'status' => '00', 
+            'message' => 'row in schooldb was deleted'
+        ])
+        : response()->json([
+            'status' => '01',
+            'message' => 'row in schooldb is not valid or not exist',
         ]);
     }
 }
