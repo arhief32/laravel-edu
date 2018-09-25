@@ -102,13 +102,40 @@ class InvoiceController extends Controller
 
     public function requestPayment(Request $request)
     {
-        $transaction_id = $request->journal_sequence;
-        $school_gateway = substr($request->briva_number, 5,4);
-        $payments = $request->detail_payments;
+        $id_app = $request->IdApp;
+        $pass_app = $request->PassApp;
+        $transmisi_date_time = $request->TransmisiDateTime;
+        $bank_id = $request->BankID;
+        $terminal_id = $request->TerminalID;
+        $briva_number = $request->BrivaNum;
+        $payment_amount = $request->PaymentAmount;
+        $transaksi_id = $request->TransaksiID;
 
+        $response = [
+            'StatusPayment' => [
+                'ErrorDesc' => '',
+                'ErrorCode' => '',
+                'isError' => '',
+            ],
+            'Info1' => '',
+            'Info2' => '',
+            'Info3' => '',
+            'Info4' => '',
+            'Info5' => '',
+        ];
+
+        $school_id = substr($request->BrivaNum, 5,4);
+        $school_db = $this->selectDatabase($school_id);
         
-        $school_db = $this->selectDatabase($school_gateway);
-        
+        if($school_db == null)
+        {
+            $response['StatusPayment']['ErrorDesc'] = 'Data tagihan tidak ditemukan';
+            $response['StatusPayment']['ErrorCode'] = '02';
+            $response['StatusPayment']['isError'] = '1';
+            
+            return response()->json($response);
+        }
+
         config(['database.connections.mysql' => [
             'driver' => 'mysql',
             'host' => $school_db->hostname,
@@ -117,23 +144,58 @@ class InvoiceController extends Controller
             'password' => Auth::encrypt_decrypt('decrypt' ,$school_db->password)
         ]]);
 
-        if($payments == false)
+        $inquiries = $this->requestInquiry($request);
+        
+        if($inquiries == false)
         {
-            return ['status' => 'gagal'];
-        }
-        else
-        {
-            $student = DB::table('student')->select('*')->where('studentID',$payments[0]['studentID'])->first();
+            $response['StatusPayment']['ErrorDesc'] = 'Data tagihan tidak ditemukan';
+            $response['StatusPayment']['ErrorCode'] = '02';
+            $response['StatusPayment']['isError'] = '1';
             
-            foreach($payments as $payment)
+            return response()->json($response);
+        }
+        
+        $register_number = substr($briva_number, 9);
+
+        // SELECT * FROM `invoice` WHERE `RegisterNO` = '2' AND `deleted_at` = 1 ORDER BY `invoiceID` desc
+        $invoices = DB::table('invoice')->select('*')
+        ->join('student','student.studentID','=','invoice.studentID')
+        ->where([
+            ['student.RegisterNO',$register_number],
+            ['invoice.deleted_at','1'],
+            ['paidstatus','<>',2]
+            ])
+        ->orderBy('invoice.invoiceID','desc')
+        ->get();
+
+        if(count($invoices) == 0)
+        {
+            $response['StatusPayment']['ErrorDesc'] = 'Data tagihan tidak ditemukan';
+            $response['StatusPayment']['ErrorCode'] = '02';
+            $response['StatusPayment']['isError'] = '1';
+            
+            return response()->json($response);
+        }
+
+        $invoices_amount_total = [];
+        
+        foreach ($invoices as $invoice)
+        {   
+            array_push($invoices_amount_total, $invoice->amount);
+        }
+
+        $invoices_amount_total = array_sum($invoices_amount_total);
+
+        if($payment_amount == $invoices_amount_total)
+        {
+            $student = DB::table('student')->select('*')->where('registerNO',$register_number)->first();
+
+            foreach($invoices as $invoice)
             {
-                /**
-                 * Check history payment if exist
-                 */
-                if( $payment['paidstatus'] != 2)
+                if($invoice->paidstatus != 2)
                 {
                     /**
-                     * Insert into globalpayment for graphical dashboard requirement
+                     * Check history payment if exist
                      */
                     DB::table('globalpayment')->insert(
                         [
@@ -147,12 +209,12 @@ class InvoiceController extends Controller
                             'schoolyearID' => $student->schoolyearID,
                         ]
                     );
-                    
+    
                     $global_payment = DB::table('globalpayment')->select('*')
-                    ->where('studentID',$payments[0]['studentID'])
+                    ->where('studentID',$student->studentID)
                     ->orderBy('globalpaymentID','desc')
                     ->first();
-        
+    
                     /**
                      * Insert into payment for flaging requirement
                      */
@@ -164,9 +226,9 @@ class InvoiceController extends Controller
                     DB::table('payment')->insert(
                         [
                             'schoolyearID' => $student->schoolyearID,
-                            'invoiceID' => $payment['invoiceID'],
+                            'invoiceID' => $invoice->invoiceID,
                             'studentID' => $student->studentID,
-                            'paymentamount' => $payment['amount'],
+                            'paymentamount' => $invoice->amount,
                             'paymenttype' => 'BRIVA',
                             'paymentdate' => Carbon::now()->format('Y-m-d'),
                             'paymentday' => Carbon::now()->format('d'),
@@ -175,22 +237,39 @@ class InvoiceController extends Controller
                             'userID' => 0,
                             'usertypeID' => 0,
                             'uname' => 'BRI',
-                            'transactionID' => $transaction_id,
+                            'transactionID' => $transaksi_id,
                             'globalpaymentID' => $global_payment->globalpaymentID
                         ]
                     );
                 }
-                
+
                 /**
                  * FLAGING
                  */
                 // "UPDATE `invoice` SET `paidstatus` = 2 WHERE `invoiceID` = 13"
                 DB::table('invoice')
-                ->where('invoiceID', $payment['invoiceID'])
+                ->where('invoiceID', $invoice->invoiceID)
                 ->update(['paidstatus' => 2]);
             }
+            
+            $response['StatusPayment']['ErrorDesc'] = 'Sukses';
+            $response['StatusPayment']['ErrorCode'] = '00';
+            $response['StatusPayment']['isError'] = '0';
+            $response['Info1'] = 'Tagihan';
+            $response['Info2'] = $briva_number;
+            $response['Info3'] = $student->name;
+            $response['Info4'] = $payment_amount;
+            $response['Info5'] = '';
 
-            return ['status' => 'berhasil'];
+            return response()->json($response);
+        }
+        else
+        {
+            $response['StatusPayment']['ErrorDesc'] = 'Jumlah nominal pembayaran tidak sama dengan Total Tagihan';
+            $response['StatusPayment']['ErrorCode'] = '04';
+            $response['StatusPayment']['isError'] = '1';
+            
+            return response()->json($response);
         }
     }
 }
