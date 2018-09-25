@@ -21,9 +21,9 @@ class InvoiceController extends Controller
 
     public function requestInquiry(Request $request)
     {
-        $payment_gateway = substr($request->BrivaNum, 0,5);
-        $school_gateway = substr($request->BrivaNum, 5,4);
-        $nrp = substr($request->BrivaNum, 9,5);
+        $payment_gateway = substr($request['BrivaNum'], 0,5);
+        $school_gateway = substr($request['BrivaNum'], 5,4);
+        $nrp = substr($request['BrivaNum'], 9,5);
 
         $school_db = $this->selectDatabase($school_gateway);
         
@@ -46,7 +46,31 @@ class InvoiceController extends Controller
         ->orderBy('invoice.invoiceID','desc')
         ->get();
 
-        return response()->json($result);
+        $BillAmount = [];
+                
+        foreach($result as $row)
+        {
+            array_push($BillAmount, $row->amount);
+        }
+                
+        $BillDetail = [
+            'BillAmount' => (string)array_sum($BillAmount),
+            'BillName' => $result[0]->name,
+            'BrivaNum' => $request['BrivaNum'],
+        ];
+
+        $response['IdApp'] = $request->IdApp;
+        $response['PassApp'] = $request->PassApp;
+        $response['BillDetail'] = $BillDetail;
+        $response['Info1'] = 'Tagihan';
+        $response['Info2'] = '';
+        $response['Info3'] = '';
+        $response['Info4'] = '';
+        $response['Info5'] = '';
+        $response['StatusBill'] = (string)$result[0]->paidstatus;
+        $response['Currency'] = 'IDR';
+
+        return response()->json($response);
     }
 
     public function requestPayment(Request $request)
