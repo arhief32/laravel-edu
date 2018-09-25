@@ -23,9 +23,28 @@ class InvoiceController extends Controller
     {
         $payment_gateway = substr($request['BrivaNum'], 0,5);
         $school_gateway = substr($request['BrivaNum'], 5,4);
-        $nrp = substr($request['BrivaNum'], 9,5);
+        $nrp = substr($request['BrivaNum'], 9);
 
+        $response = [
+            'BillDetail' => [
+                'BillAmount' => '',
+                'BillName' => '',
+                'BrivaNum' => '',
+            ],
+            'Info1' => '',
+            'Info2' => '',
+            'Info3' => '',
+            'Info4' => '',
+            'Info5' => '',
+            'StatusBill' => '',
+            'Currency' => '',
+        ];
+        
         $school_db = $this->selectDatabase($school_gateway);
+        if($school_db == null)
+        {
+            return response()->json($response);
+        }
         
         config(['database.connections.mysql' => [
             'driver' => 'mysql',
@@ -45,6 +64,11 @@ class InvoiceController extends Controller
             ])
         ->orderBy('invoice.invoiceID','desc')
         ->get();
+        
+        if(count($result) == 0)
+        {
+            return response()->json($response);
+        }
 
         $BillAmount = [];
                 
@@ -59,8 +83,6 @@ class InvoiceController extends Controller
             'BrivaNum' => $request['BrivaNum'],
         ];
 
-        $response['IdApp'] = $request->IdApp;
-        $response['PassApp'] = $request->PassApp;
         $response['BillDetail'] = $BillDetail;
         $response['Info1'] = 'Tagihan';
         $response['Info2'] = '';
@@ -72,6 +94,11 @@ class InvoiceController extends Controller
 
         return response()->json($response);
     }
+
+
+
+
+
 
     public function requestPayment(Request $request)
     {
