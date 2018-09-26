@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -67,6 +69,20 @@ class RegistrationController extends Controller
             'brivaNo' => $corporate_code,
             'schoolName' => $nama_company,
         ]);
+
+        /**
+         * create new school_db / company
+         */
+        $process = new Process("sh script/createSchool.sh '".$get_school_id."' '".$nama_company."'");
+        // $process = new Process("pwd");
+        $process->run();
+
+        // executes after the command finishes
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        echo $process->getOutput();
 
         return $insert_data == true ? 
         response()->json([
