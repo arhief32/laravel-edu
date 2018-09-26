@@ -130,6 +130,7 @@ class AnnouncementController extends Controller
             foreach($result as $event)
             {
                 array_push($event_detail, [
+                    'id' => (string)$event->eventID,
                     'title' => $event->title,
                     'fromDate' => $event->fdate,
                     'toDate' => $event->ttime,
@@ -156,6 +157,29 @@ class AnnouncementController extends Controller
             
             if($request->header('userTypeID') == true)
             {
+                $check_flag_event = DB::table('eventcounter')->select('*')
+                ->where([
+                    ['eventID', $request->eventID],
+                    ['username', $auth->username],
+                ])->first();
+
+                if($check_flag_event == true)
+                {
+                    $update_flag_event = DB::table('eventcounter')
+                    ->where([
+                        ['eventcounterID', $check_flag_event->eventcounterID],
+                        ['eventID', $check_flag_event->eventID],
+                        ['username', $check_flag_event->username],
+                    ])
+                    ->update([
+                        'eventID' => $request->eventID,
+                        'username' => $auth->username,
+                        'status' => $request->status,
+                    ]);
+
+                    return response()->json(ResponseCode::success(''));
+                }
+                
                 $request->header('userTypeID') == 3 ? $type = 'Student' : $type = 'Parents';
 
                 // SELECT * FROM `event` WHERE `schoolyearID` = '1' ORDER BY `fdate` desc, `ftime` asc
