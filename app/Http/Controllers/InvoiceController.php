@@ -88,9 +88,11 @@ class InvoiceController extends Controller
                 
         foreach($result as $row)
         {
-            array_push($BillAmount, $row->amount);
+            // 1 - (discount/100) * $amount
+            $amount = (1-($row->discount/100))*$row->amount;
+            array_push($BillAmount, $amount);
         }
-                
+            
         // $BillDetail = [
         //     'BillAmount' => (string)array_sum($BillAmount),
         //     'BillName' => $result[0]->name,
