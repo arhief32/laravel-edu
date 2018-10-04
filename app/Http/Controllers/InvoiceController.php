@@ -132,6 +132,7 @@ class InvoiceController extends Controller
         {
             return response()->json(ResponseCode::brivaPaymentNotMatch($response));
         }
+        $inquiries_amount = $inquiries->original['responseData']['billAmount'];
         
         $register_number = substr($briva_number, 9);
 
@@ -160,7 +161,8 @@ class InvoiceController extends Controller
 
         $invoices_amount_total = array_sum($invoices_amount_total);
 
-        if($payment_amount == $invoices_amount_total)
+        if($payment_amount == $inquiries_amount)
+        // if($payment_amount == $invoices_amount_total)
         {
             $student = DB::table('student')->select('*')->where('registerNO',$register_number)->first();
 
