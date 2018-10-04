@@ -22,34 +22,15 @@ class InvoiceController extends Controller
 
     public function requestInquiry(Request $request)
     {
-        // $briva_number = $request['BrivaNum'];
-        // $payment_gateway = substr($briva_number, 0,5);
-        // $school_gateway = substr($briva_number, 5,4);
-        // $nrp = substr($briva_number, 9);
-
         $briva_number = $request['brivaNo'];
         $payment_gateway = substr($briva_number, 0,5);
         $school_gateway = substr($briva_number, 5,4);
         $nrp = substr($briva_number, 9);
 
-        // $response = [
-        //     'BillDetail' => [
-        //         'BillAmount' => '',
-        //         'BillName' => '',
-        //         'BrivaNum' => '',
-        //     ],
-        //     'Info1' => '',
-        //     'Info2' => '',
-        //     'Info3' => '',
-        //     'Info4' => '',
-        //     'Info5' => '',
-        //     'StatusBill' => '',
-        //     'Currency' => '',
-        // ];
-
         $response = [
             'billAmount' => '0',
             'billName' => '',
+            'billInfo' => '',
             'brivaNum' => $briva_number,
             'transactionDateTime' => Carbon::now()->setTimezone('Asia/Jakarta')->format('YmdHms'),
         ];
@@ -85,30 +66,21 @@ class InvoiceController extends Controller
         }
 
         $BillAmount = [];
+        $invoices_id = [];
                 
         foreach($result as $row)
         {
             // 1 - (discount/100) * $amount
             $amount = (1-($row->discount/100))*$row->amount;
             array_push($BillAmount, $amount);
+            array_push($invoices_id, $row->invoiceID);
         }
-            
-        // $BillDetail = [
-        //     'BillAmount' => (string)array_sum($BillAmount),
-        //     'BillName' => $result[0]->name,
-        //     'BrivaNum' => $briva_number,
-        // ];
-        // $response['BillDetail'] = $BillDetail;
-        // $response['Info1'] = 'Tagihan';
-        // $response['Info2'] = '';
-        // $response['Info3'] = '';
-        // $response['Info4'] = '';
-        // $response['Info5'] = '';
-        // $response['StatusBill'] = (string)$result[0]->paidstatus;
-        // $response['Currency'] = 'IDR';
 
+        $invoices_id = implode(', ',$invoices_id);
+            
         $response['billAmount'] = (string)array_sum($BillAmount);
         $response['billName'] = $result[0]->name;
+        $response['billInfo'] = $invoices_id;
 
         $response = ResponseCode::brivaInquirySuccess($response);
 
@@ -122,34 +94,12 @@ class InvoiceController extends Controller
 
     public function requestPayment(Request $request)
     {
-        // $id_app = $request->IdApp;
-        // $pass_app = $request->PassApp;
-        // $transmisi_date_time = $request->TransmisiDateTime;
-        // $bank_id = $request->BankID;
-        // $terminal_id = $request->TerminalID;
-        // $briva_number = $request->BrivaNum;
-        // $payment_amount = $request->PaymentAmount;
-        // $transaksi_id = $request->TransaksiID;
-
         $id_app = $request->idWS;
         $pass_app = $request->tokenWS;
         $transmisi_date_time = $request->transactionDateTime;
         $briva_number = $request->brivaNo;
         $payment_amount = $request->sumAmount;
         $transaksi_id = $request->journalSeq;
-
-        // $response = [
-        //     'StatusPayment' => [
-        //         'ErrorDesc' => '',
-        //         'ErrorCode' => '',
-        //         'isError' => '',
-        //     ],
-        //     'Info1' => '',
-        //     'Info2' => '',
-        //     'Info3' => '',
-        //     'Info4' => '',
-        //     'Info5' => '',
-        // ];
 
         $response = [
             'idTransaction' => '',
@@ -281,24 +231,12 @@ class InvoiceController extends Controller
                 
             }
             
-            // $response['StatusPayment']['ErrorDesc'] = 'Sukses';
-            // $response['StatusPayment']['ErrorCode'] = '00';
-            // $response['StatusPayment']['isError'] = '0';
-            // $response['Info1'] = 'Tagihan';
-            // $response['Info2'] = $briva_number;
-            // $response['Info3'] = $student->name;
-            // $response['Info4'] = $payment_amount;
-            // $response['Info5'] = '';
-
             $response['idTransaction'] = implode(', ', $invoices_id);
             
             return response()->json(ResponseCode::brivaPaymentSuccess($response));
         }
         else
         {
-            // $response['StatusPayment']['ErrorDesc'] = 'Jumlah nominal pembayaran tidak sama dengan Total Tagihan';
-            // $response['StatusPayment']['ErrorCode'] = '04';
-            // $response['StatusPayment']['isError'] = '1';
             return response()->json(ResponseCode::brivaPaymentNotMatch($response));
         }
     }
