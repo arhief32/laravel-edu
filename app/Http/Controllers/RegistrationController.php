@@ -73,7 +73,7 @@ class RegistrationController extends Controller
         /**
          * create new school_db / company
          */
-        $process = new Process("sh script/createSchool.sh '".$get_school_id."' '".$nama_company."'");
+        $process = new Process("sh public/script/createSchool.sh '".$get_school_id."' '".$nama_company."'");
         // $process = new Process("pwd");
         $process->run();
 
