@@ -10,6 +10,6 @@ schoolDataDL=`cat $PWD"/public/script/"schoolData.sql`
 paramData="USE school$1; set @schoolID='$1', @sname='$2'; "
 queryData="$paramData""$schoolData"
 
-mysql -h mysqldb -P 3306 -u root -proot -e "$queryDDL"
-mysql -h mysqldb -P 3306 -u root -proot -e "$queryData"
+mysql -h 172.18.133.135 -P 3306 -u root -proot -e "$queryDDL"
+mysql -h 172.18.133.135 -P 3306 -u root -proot -e "$queryData"
 
