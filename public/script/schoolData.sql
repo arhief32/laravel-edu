@@ -1177,7 +1177,7 @@ INSERT INTO `usertype` VALUES (5, 'Accountant', '2016-06-24 07:13:54', '2016-06-
 -- ----------------------------
 -- Records of markpercentage
 -- ----------------------------
-INSERT INTO `markpercentage` VALUES (1, 'Poin', 100, NULL, NULL, NULL, '2018-10-08 03:25:39', '2018-10-08 03:25:39', 1, 'administrator', 'Admin');
+INSERT INTO `markpercentage` VALUES (1, 'TOTAL', 100, NULL, NULL, NULL, '2018-10-08 03:25:39', '2018-10-08 03:25:39', 1, 'administrator', 'Admin');
 
 
 
