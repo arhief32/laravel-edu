@@ -31,7 +31,7 @@ class InvoiceController extends Controller
             'billAmount' => '0',
             'billName' => '',
             'billInfo' => '',
-            'brivaNum' => $briva_number,
+            'brivaNo' => $briva_number,
             'transactionDateTime' => Carbon::now()->setTimezone('Asia/Jakarta')->format('YmdHms'),
         ];
         
@@ -87,27 +87,21 @@ class InvoiceController extends Controller
         return response()->json($response);
     }
 
-
-
-
-
-
     public function requestPayment(Request $request)
     {
         $id_app = $request->idWS;
         $pass_app = $request->tokenWS;
         $transmisi_date_time = $request->transactionDateTime;
         $briva_number = $request->brivaNo;
-        $payment_amount = $request->sumAmount;
+        $payment_amount = $request->billAmount;
         $transaksi_id = $request->journalSeq;
 
         $response = [
             'idTransaction' => '',
             'brivaNo' => $briva_number,
-            'sumAmount' => $payment_amount,
+            'billAmount' => $payment_amount,
+            'transactionDateTime' => Carbon::now()->setTimezone('Asia/Jakarta')->format('YmdHms'),
         ];
-
-
 
         $school_id = substr($briva_number, 5,4);
         $school_db = $this->selectDatabase($school_id);
@@ -133,7 +127,7 @@ class InvoiceController extends Controller
             return response()->json(ResponseCode::brivaPaymentNotMatch($response));
         }
         $inquiries_amount = $inquiries->original['responseData']['billAmount'];
-        
+// return response()->json(['inquiry_result' => $inquiries_amount, 'payment' => $payment_amount]);        
         $register_number = substr($briva_number, 9);
 
         // SELECT * FROM `invoice` WHERE `RegisterNO` = '2' AND `deleted_at` = 1 ORDER BY `invoiceID` desc
