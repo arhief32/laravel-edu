@@ -1,12 +1,12 @@
 #$1 = schoolID
 #$2 = school name
 
-schoolDDL=`cat $PWD"/public/script/"schoolDDL.sql`
+schoolDDL=`cat $PWD"/script/"schoolDDL.sql`
 paramDDL="SET NAMES utf8mb4; SET FOREIGN_KEY_CHECKS = 0; CREATE DATABASE IF NOT EXISTS school$1; USE school$1; "
 queryDDL="$paramDDL""$schoolDDL"
 #echo "$queryDDL"
 
-schoolData=`cat $PWD"/public/script/"schoolData.sql`
+schoolData=`cat $PWD"/script/"schoolData.sql`
 paramData="USE school$1; set @schoolID='$1', @sname='$2'; "
 queryData="$paramData""$schoolData"
 

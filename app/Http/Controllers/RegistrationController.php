@@ -73,7 +73,7 @@ class RegistrationController extends Controller
         /**
          * create new school_db / company
          */
-        $process = new Process("sh public/script/createSchool.sh '".$get_school_id."' '".$nama_company."'");
+        $process = new Process("sh script/createSchool.sh '".$get_school_id."' '".$nama_company."'");
         // $process = new Process("pwd");
         $process->run();
 
@@ -82,7 +82,7 @@ class RegistrationController extends Controller
             throw new ProcessFailedException($process);
         }
 
-        echo $process->getOutput();
+        // echo $process->getOutput();
 
         return $insert_data == true ? 
         response()->json([
