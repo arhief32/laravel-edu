@@ -286,6 +286,7 @@ class AuthController extends Controller
                 ->first();
 
                 $check_student_auth->photo = 'http://172.18.133.135:81/BRI-SmartSchool/uploads/images/'.$check_student_auth->photo;
+                $check_student_auth->sex == 'Male' ? $check_student_auth->sex = 'Laki-laki' : $check_student_auth->sex = 'Perempuan';
             }
     
             if($user_type_id == 4)

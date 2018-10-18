@@ -107,6 +107,7 @@ class TeacherController extends Controller
             foreach($result as $teacher)
             {
                 $teacher->photo = 'http://172.18.133.135:81/BRI-SmartSchool/uploads/images/'.$teacher->photo;
+                $teacher->sex == 'Male' ? $teacher->sex = 'Laki-laki' : $teacher->sex = 'Perempuan';
             }
 
             return response()->json(ResponseCode::success($result));
