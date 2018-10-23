@@ -133,7 +133,7 @@ class AnnouncementController extends Controller
                     'id' => (string)$event->eventID,
                     'title' => $event->title,
                     'fromDate' => $event->fdate,
-                    'toDate' => $event->ttime,
+                    'toDate' => $event->tdate,
                     'details' => $event->details,
                     'photo' => 'http://172.18.133.135:81/BRI-SmartSchool/uploads/images/'.$event->photo,
                 ]);
