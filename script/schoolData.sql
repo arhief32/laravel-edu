@@ -619,22 +619,16 @@ INSERT INTO `permission_relationships` VALUES (752, 7);
 INSERT INTO `permission_relationships` VALUES (753, 7);
 INSERT INTO `permission_relationships` VALUES (762, 7);
 INSERT INTO `permission_relationships` VALUES (763, 7);
-INSERT INTO `permission_relationships` VALUES (804, 1);
 INSERT INTO `permission_relationships` VALUES (805, 1);
-INSERT INTO `permission_relationships` VALUES (804, 2);
+INSERT INTO `permission_relationships` VALUES (804, 1);
 INSERT INTO `permission_relationships` VALUES (805, 2);
-INSERT INTO `permission_relationships` VALUES (804, 3);
+INSERT INTO `permission_relationships` VALUES (804, 2);
 INSERT INTO `permission_relationships` VALUES (805, 3);
-INSERT INTO `permission_relationships` VALUES (804, 4);
-INSERT INTO `permission_relationships` VALUES (804, 5);
-INSERT INTO `permission_relationships` VALUES (804, 6);
-INSERT INTO `permission_relationships` VALUES (804, 7);
-INSERT INTO `permission_relationships` VALUES (804, 8);
+INSERT INTO `permission_relationships` VALUES (804, 3);
 INSERT INTO `permission_relationships` VALUES (805, 4);
+INSERT INTO `permission_relationships` VALUES (804, 4);
 INSERT INTO `permission_relationships` VALUES (805, 5);
-INSERT INTO `permission_relationships` VALUES (805, 6);
-INSERT INTO `permission_relationships` VALUES (805, 7);
-INSERT INTO `permission_relationships` VALUES (805, 8);
+INSERT INTO `permission_relationships` VALUES (804, 5);
 
 
 -- ----------------------------
@@ -1093,7 +1087,7 @@ INSERT INTO `menu` VALUES (63, 'expense', 'expense', 'icon-expense', '', 1, 16, 
 INSERT INTO `menu` VALUES (64, 'member', 'lmember', 'icon-member', '', 0, 13, 380);
 INSERT INTO `menu` VALUES (65, 'books', 'book', 'icon-lbooks', '', 0, 13, 370);
 INSERT INTO `menu` VALUES (66, 'issue', 'issue', 'icon-issue', '', 0, 13, 360);
-INSERT INTO `menu` VALUES (69, 'import', 'bulkimport', 'fa-upload', '', 0, 20, 90);
+INSERT INTO `menu` VALUES (69, 'import', 'bulkimport', 'fa-upload', '', 1, 20, 90);
 INSERT INTO `menu` VALUES (70, 'update', 'update', 'fa-refresh', '', 0, 20, 50);
 INSERT INTO `menu` VALUES (71, 'main_child', '#', 'fa-child', '', 0, 0, 430);
 INSERT INTO `menu` VALUES (72, 'activitiescategory', 'activitiescategory', 'fa-pagelines', '', 0, 71, 420);
@@ -1130,22 +1124,23 @@ INSERT INTO `menu` VALUES (102, 'routinereport', 'routinereport', 'iniicon-routi
 INSERT INTO `menu` VALUES (103, 'examschedulereport', 'examschedulereport', 'iniicon-examschedulereport', '', 1, 18, 950);
 INSERT INTO `menu` VALUES (104, 'feesreport', 'feesreport', 'iniicon-feesreport', '', 1, 18, 850);
 INSERT INTO `menu` VALUES (105, 'duefeesreport', 'duefeesreport', 'iniicon-duefeesreport', '', 1, 18, 840);
-INSERT INTO `menu` VALUES (106, 'balancefeesreport', 'balancefeesreport', 'iniicon-balancefeesreport', '', 1, 18, 830);
+INSERT INTO `menu` VALUES (106, 'balancefeesreport', 'balancefeesreport', 'iniicon-balancefeesreport', '', 0, 18, 830);
 INSERT INTO `menu` VALUES (107, 'transactionreport', 'transactionreport', 'iniicon-transactionreport', '', 1, 18, 820);
 INSERT INTO `menu` VALUES (108, 'sociallink', 'sociallink', 'iniicon-sociallink', '', 0, 20, 109);
 INSERT INTO `menu` VALUES (109, 'idcardreport', 'idcardreport', 'iniicon-idcardreport', '', 1, 18, 980);
-INSERT INTO `menu` VALUES (110, 'admitcardreport', 'admitcardreport', 'iniicon-admitcardreport', '', 1, 18, 970);
-INSERT INTO `menu` VALUES (111, 'studentfinereport', 'studentfinereport', 'iniicon-studentfinereport', '', 1, 18, 810);
+INSERT INTO `menu` VALUES (110, 'admitcardreport', 'admitcardreport', 'iniicon-admitcardreport', '', 0, 18, 970);
+INSERT INTO `menu` VALUES (111, 'studentfinereport', 'studentfinereport', 'iniicon-studentfinereport', '', 0, 18, 810);
 INSERT INTO `menu` VALUES (112, 'attendanceoverviewreport', 'attendanceoverviewreport', 'iniicon-attendanceoverviewreport', '', 1, 18, 930);
 INSERT INTO `menu` VALUES (113, 'income', 'income', 'iniicon-income', '', 1, 16, 239);
-INSERT INTO `menu` VALUES (114, 'global_payment', 'global_payment', 'fa-balance-scale', '', 1, 16, 238);
+INSERT INTO `menu` VALUES (114, 'global_payment', 'global_payment', 'fa-balance-scale', '', 0, 16, 238);
 INSERT INTO `menu` VALUES (115, 'terminalreport', 'terminalreport', 'iniicon-terminalreport', '', 1, 18, 920);
-INSERT INTO `menu` VALUES (116, 'tabulationsheetreport', 'tabulationsheetreport', 'iniicon-tabulationsheetreport', '', 1, 18, 900);
-INSERT INTO `menu` VALUES (117, 'marksheetreport', 'marksheetreport', 'iniicon-marksheetreport', '', 1, 18, 890);
+INSERT INTO `menu` VALUES (116, 'tabulationsheetreport', 'tabulationsheetreport', 'iniicon-tabulationsheetreport', '', 0, 18, 900);
+INSERT INTO `menu` VALUES (117, 'marksheetreport', 'marksheetreport', 'iniicon-marksheetreport', '', 0, 18, 890);
 INSERT INTO `menu` VALUES (118, 'meritstagereport', 'meritstagereport', 'iniicon-meritstagereport', '', 1, 18, 910);
 INSERT INTO `menu` VALUES (119, 'progresscardreport', 'progresscardreport', 'iniicon-progresscardreport', '', 1, 18, 880);
 INSERT INTO `menu` VALUES (120, 'onlineexamreport', 'onlineexamreport', 'iniicon-onlineexamreport', '', 0, 18, 870);
 INSERT INTO `menu` VALUES (121, 'promo', 'promo', 'fa-calendar', '', 1, 0, 1000);
+
 
 -- ----------------------------
 -- Records of themes
