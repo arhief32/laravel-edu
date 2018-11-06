@@ -204,25 +204,61 @@ class AcademicController extends Controller
                 return Response()->json(ResponseCode::failed());
             }
 
+            $array_days = [
+                [
+                    'day' => 'MONDAY',
+                    'details' => [],
+                ],
+                [
+                    'day' => 'TUESDAY',
+                    'details' => [],
+                ],
+                [
+                    'day' => 'WEDNESDAY',
+                    'details' => [],
+                ],
+                [
+                    'day' => 'THURSDAY',
+                    'details' => [],
+                ],
+                [
+                    'day' => 'FRIDAY',
+                    'details' => [],
+                ],
+                [
+                    'day' => 'SATURDAY',
+                    'details' => [],
+                ],
+            ];
+
+            $array_routine_list = [];
+
             foreach($routine_list as $routine)
             {
-                $days = ['MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
-
-                foreach($days as $day)
+                foreach($array_days as $day)
                 {
-                    $routine['day'] != $day ? array_push($routine_list, [
-                        'day' => $day,
-                        'details' => []
-                        ]) : false;
+                    $day['day'] == $routine['day'] ?
+                    array_push($array_routine_list, 
+                    [
+                        'day' => $day['day'],
+                        'details' => $routine['details'],
+                    ]):
+                    array_push($array_routine_list,
+                    [
+                        'day' => $day['day'],
+                        'details' => [],
+                    ]);
                 }
             }
+
+            // return response()->json($array_return);
 
             if($request->header('userTypeID') == 3)
             {
                 return response()->json(ResponseCode::success([
                     'registerNo' => $auth->registerNO,
                     'name' => $auth->name,
-                    'routineList' => $routine_list,
+                    'routineList' => $array_routine_list,
                 ]));
             }
             else if($request->header('userTypeID') == 4)
@@ -230,7 +266,7 @@ class AcademicController extends Controller
                 return response()->json(ResponseCode::success([
                     'registerNo' => $student->registerNO,
                     'name' => $student->name,
-                    'routineList' => $routine_list 
+                    'routineList' => $array_routine_list 
                 ]));
             }
             
