@@ -34,7 +34,7 @@ CREATE TABLE `activitiescategory`  (
   `userID` int(11) NOT NULL,
   `usertypeID` int(40) NOT NULL,
   PRIMARY KEY (`activitiescategoryID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for activitiescomment
@@ -233,6 +233,21 @@ CREATE TABLE `attendance`  (
   `a31` varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`attendanceID`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Table structure for audit_trail
+-- ----------------------------
+DROP TABLE IF EXISTS `audit_trail`;
+CREATE TABLE `audit_trail`  (
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` varchar(10) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `ip` varchar(50) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `agent` varchar(255) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `timepost` datetime DEFAULT NULL,
+  `uri` varchar(100) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `getpost` mediumtext CHARACTER SET latin1 COLLATE latin1_general_ci,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for automation_rec
@@ -545,7 +560,7 @@ CREATE TABLE `feetypes`  (
   `feetypes` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `note` text CHARACTER SET utf8 COLLATE utf8_general_ci,
   PRIMARY KEY (`feetypesID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for fmenu
@@ -1051,7 +1066,7 @@ CREATE TABLE `menu`  (
   `parentID` int(11) NOT NULL DEFAULT 0,
   `priority` int(11) NOT NULL DEFAULT 1000,
   PRIMARY KEY (`menuID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 122 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for message
@@ -1322,7 +1337,7 @@ CREATE TABLE `permissions`  (
   `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT 'In most cases, this should be the name of the module (e.g. news)',
   `active` enum('yes','no') CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'yes',
   PRIMARY KEY (`permissionID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 807 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for posts
@@ -1415,88 +1430,6 @@ CREATE TABLE `purchase`  (
   `create_userID` int(11) NOT NULL,
   `create_usertypeID` int(11) NOT NULL,
   PRIMARY KEY (`purchaseID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
-
--- ----------------------------
--- Table structure for question_answer
--- ----------------------------
-DROP TABLE IF EXISTS `question_answer`;
-CREATE TABLE `question_answer`  (
-  `answerID` int(11) NOT NULL AUTO_INCREMENT,
-  `questionID` int(11) NOT NULL,
-  `optionID` int(11) DEFAULT NULL,
-  `typeNumber` int(11) NOT NULL,
-  `text` text CHARACTER SET utf8 COLLATE utf8_general_ci,
-  PRIMARY KEY (`answerID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
-
--- ----------------------------
--- Table structure for question_bank
--- ----------------------------
-DROP TABLE IF EXISTS `question_bank`;
-CREATE TABLE `question_bank`  (
-  `questionBankID` int(11) NOT NULL AUTO_INCREMENT,
-  `question` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `explanation` text CHARACTER SET utf8 COLLATE utf8_general_ci,
-  `levelID` int(11) DEFAULT NULL,
-  `groupID` int(11) DEFAULT NULL,
-  `totalQuestion` int(11) DEFAULT 0,
-  `totalOption` int(11) DEFAULT NULL,
-  `typeNumber` int(11) DEFAULT NULL,
-  `parentID` int(11) DEFAULT 0,
-  `time` int(11) DEFAULT 0,
-  `mark` int(11) DEFAULT 0,
-  `hints` text CHARACTER SET utf8 COLLATE utf8_general_ci,
-  `upload` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `subjectID` int(11) DEFAULT NULL,
-  `create_date` datetime NOT NULL,
-  `modify_date` datetime NOT NULL,
-  `create_userID` int(11) NOT NULL,
-  `create_usertypeID` int(11) NOT NULL,
-  PRIMARY KEY (`questionBankID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
-
--- ----------------------------
--- Table structure for question_group
--- ----------------------------
-DROP TABLE IF EXISTS `question_group`;
-CREATE TABLE `question_group`  (
-  `questionGroupID` int(11) NOT NULL AUTO_INCREMENT,
-  `title` varchar(250) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  PRIMARY KEY (`questionGroupID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
-
--- ----------------------------
--- Table structure for question_level
--- ----------------------------
-DROP TABLE IF EXISTS `question_level`;
-CREATE TABLE `question_level`  (
-  `questionLevelID` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(250) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  PRIMARY KEY (`questionLevelID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
-
--- ----------------------------
--- Table structure for question_option
--- ----------------------------
-DROP TABLE IF EXISTS `question_option`;
-CREATE TABLE `question_option`  (
-  `optionID` int(11) NOT NULL AUTO_INCREMENT,
-  `questionID` int(11) NOT NULL,
-  `name` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `img` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  PRIMARY KEY (`optionID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
-
--- ----------------------------
--- Table structure for question_type
--- ----------------------------
-DROP TABLE IF EXISTS `question_type`;
-CREATE TABLE `question_type`  (
-  `questionTypeID` int(11) NOT NULL AUTO_INCREMENT,
-  `typeNumber` int(11) NOT NULL,
-  `name` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  PRIMARY KEY (`questionTypeID`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
@@ -1852,8 +1785,10 @@ CREATE TABLE `systemadmin`  (
   `active` int(11) NOT NULL,
   `systemadminextra1` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `systemadminextra2` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `salary` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `account_number` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`systemadminID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for tattendance
@@ -1924,6 +1859,8 @@ CREATE TABLE `teacher`  (
   `create_username` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `create_usertype` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `active` int(11) NOT NULL,
+  `salary` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `account_number` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`teacherID`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
@@ -1940,7 +1877,7 @@ CREATE TABLE `themes`  (
   `topcolor` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `leftcolor` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`themesID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for tmember
@@ -2039,6 +1976,8 @@ CREATE TABLE `user`  (
   `create_username` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `create_usertype` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `active` int(11) NOT NULL,
+  `salary` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `account_number` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`userID`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
@@ -2055,7 +1994,7 @@ CREATE TABLE `usertype`  (
   `create_username` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `create_usertype` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`usertypeID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for vendor
@@ -2109,4 +2048,4 @@ CREATE TABLE `weaverandfine`  (
   PRIMARY KEY (`weaverandfineID`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
-
+SET FOREIGN_KEY_CHECKS = 1;
