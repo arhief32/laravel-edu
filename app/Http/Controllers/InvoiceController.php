@@ -38,7 +38,7 @@ class InvoiceController extends Controller
         ];
         
         $self_id_ws = 'WS-Edu';
-        $self_token_ws = '12345678910';
+        $self_token_ws = 'V0pjQVpnOGhqYnloSmNLcFNIOExWUT09';
         
         if($id_ws == $self_id_ws && $token_ws == $self_token_ws)
         {
@@ -124,7 +124,8 @@ class InvoiceController extends Controller
         ];
 
         $self_id_ws = 'WS-Edu';
-        $self_token_ws = '12345678910';
+        $self_token_ws = 'V0pjQVpnOGhqYnloSmNLcFNIOExWUT09';
+
         if($id_app == $self_id_ws && $pass_app == $self_token_ws)
         {
             $school_id = substr($briva_number, 5,4);
