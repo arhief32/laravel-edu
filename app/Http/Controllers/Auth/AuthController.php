@@ -285,7 +285,7 @@ class AuthController extends Controller
                 ->where('username',$username)
                 ->first();
 
-                $check_student_auth->photo = 'http://172.18.133.135:81/BRI-SmartSchool/uploads/images/'.$check_student_auth->photo;
+                $check_student_auth->photo = 'http://junio-smart.id/BRI-SmartSchool/uploads/images/'.$check_student_auth->photo;
                 $check_student_auth->sex == 'Male' ? $check_student_auth->sex = 'Laki-laki' : $check_student_auth->sex = 'Perempuan';
             }
     
@@ -315,7 +315,7 @@ class AuthController extends Controller
                 ->where('username',$username)
                 ->first();
 
-                $check_parent_auth->photo = 'http://172.18.133.135:81/BRI-SmartSchool/uploads/images/'.$check_parent_auth->photo;
+                $check_parent_auth->photo = 'http://junio-smart.id/BRI-SmartSchool/uploads/images/'.$check_parent_auth->photo;
             }
     
             // response
