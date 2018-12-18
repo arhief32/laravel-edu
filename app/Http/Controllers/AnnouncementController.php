@@ -135,7 +135,8 @@ class AnnouncementController extends Controller
                     'fromDate' => $event->fdate,
                     'toDate' => $event->tdate,
                     'details' => $event->details,
-                    'photo' => 'http://172.18.133.135:81/BRI-SmartSchool/uploads/images/'.$event->photo,
+                    // http://junio-smart.id/BRI-SmartSchool/uploads/images/default.png
+                    'photo' => 'http://junio-smart.id/BRI-SmartSchool/uploads/images/'.$event->photo,
                 ]);
             }
 
@@ -252,7 +253,7 @@ class AnnouncementController extends Controller
                     'fromDate' => $holiday->fdate,
                     'toDate' => $holiday->tdate,
                     'details' => $holiday->details,
-                    'photo' => 'http://172.18.133.135:81/BRI-SmartSchool/uploads/images/'.$holiday->photo,
+                    'photo' => 'http://junio-smart.id/BRI-SmartSchool/uploads/images/'.$holiday->photo,
                 ]);
             }
 
