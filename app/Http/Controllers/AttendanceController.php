@@ -58,7 +58,7 @@ class AttendanceController extends Controller
 
             foreach($result as $student)
             {
-                $student->photo = 'http://172.18.133.135:81/BRI-SmartSchool/uploads/images/'.$student->photo;
+                $student->photo = 'http://junio-smart.id/BRI-SmartSchool/uploads/images/'.$student->photo;
             }
             
             return response()->json(ResponseCode::success($result));

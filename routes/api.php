@@ -14,8 +14,9 @@ use Illuminate\Support\Facades\DB;
 |
 */
 Route::post('/registration-company','RegistrationController@register');
+Route::get('/rollback-company','RegistrationController@deleteRegister');
 
-Route::get('/request-inquiry','InvoiceController@requestInquiry');
+Route::post('/request-inquiry','InvoiceController@requestInquiry');
 Route::post('/request-payment','InvoiceController@requestPayment');
 
 /**
@@ -103,3 +104,14 @@ Route::prefix('/parent')->middleware('parent')->group(function(){
         Route::get('/holiday','AnnouncementController@getHoliday');
     // });
 });
+
+
+
+
+
+
+
+/**
+ * NOTIFICATION EXAMPLE
+ */
+Route::get('example-notification','NotificationController@exampleNotification');

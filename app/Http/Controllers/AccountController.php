@@ -181,6 +181,8 @@ class AccountController extends Controller
             
             foreach($result as $payment)
             {
+                $payment->paidstatus == 2 ? $payment->paidstatus = 'Paid' : $payment->paidstatus = 'Not paid'; 
+
                 array_push($payment_detail, [
                     'feeType' => $payment->feetype,
                     'amount' => $payment->amount,

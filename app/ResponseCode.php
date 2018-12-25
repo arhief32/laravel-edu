@@ -59,4 +59,67 @@ class ResponseCode extends Model
             'responseData' => $request
         ];
     }
+
+    public static function brivaNotFound($status_code, $request)
+    {
+        return [
+            'responseCode' => $status_code,
+            'responseDesc' => 'Tagihan tidak ditemukan',
+            'responseData' => $request,
+        ];
+    }
+
+    public static function brivaNotAuthorized($status_code, $request)
+    {
+        return [
+            'responseCode' => $status_code,
+            'responseDesc' => 'Tidak Ada Hak Akses API',
+            'responseData' => $request,
+        ];
+    }
+
+    public static function brivaInquirySuccess($request)
+    {
+        return [
+            'responseCode' => '0',
+            'responseDesc' => 'Inquiry Success',
+            'responseData' => $request,
+        ];
+    }
+
+    public static function brivaDatabaseNotFound($request)
+    {
+        return [
+            'responseCode' => '99',
+            'responseDesc' => 'Error query di database',
+            'responseData' => $request,
+        ];
+    }
+
+    public static function brivaPaymentNotMatch($request)
+    {
+        return [
+            'responseCode' => '04',
+            'responseDesc' => 'Jumlah nominal pembayaran tidak sama dengan total tagihan',
+            'responseData' => $request,
+        ];
+    }
+
+    public static function brivaPaymentNotFound($request)
+    {
+        return [
+            'responseCode' => '02',
+            'responseDesc' => 'Data Tagihan tidak ditemukan',
+            'responseData' => $request,
+        ];
+    }
+
+    public static function brivaPaymentSuccess($request)
+    {
+        return [
+            'responseCode' => '00',
+            'responseDesc' => 'Transaction Success',
+            'responseData' => $request,
+        ];
+    }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -68,16 +70,50 @@ class RegistrationController extends Controller
             'schoolName' => $nama_company,
         ]);
 
+        /**
+         * create new school_db / company
+         */
+        $process = new Process("sh script/createSchool.sh '".$get_school_id."' '".$nama_company."'");
+        // $process = new Process("pwd");
+        $process->run();
+
+        // executes after the command finishes
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        // echo $process->getOutput();
+
         return $insert_data == true ? 
         response()->json([
             'status' => 'success',
             'message' => [
-                'corporate_code' => $get_school_id
+                'company_code' => $get_school_id
             ]
         ])
         :
         response()->json([
             'status' => 'gagal'
+        ]);
+    }
+
+    public function deleteRegister(Request $request)
+    {
+        $school_id = $request->company_code;
+
+        // delete from schooldb where schoolid = 'newSchoolID '
+        // drop database school[newSchoolID]
+        $delete_row = DB::connection('school-gateway')->table('schooldb')
+        ->where('schoolID', $school_id)
+        ->delete();
+        
+        return $delete_row == true ? response()->json([
+            'status' => '00', 
+            'message' => 'row in schooldb was deleted'
+        ])
+        : response()->json([
+            'status' => '01',
+            'message' => 'row in schooldb is not valid or not exist',
         ]);
     }
 }

@@ -49,13 +49,17 @@ class AnnouncementController extends Controller
             }
             else if($request->header('userTypeID') == 4)
             {
-                $student = Student::getStudent($request);
+                // $student = Student::getStudent($request);
+                // select schoolyearID from schoolyear order by schoolyearID desc limit 1 
+                $school_year_id = DB::table('schoolyear')->select('schoolyearID')
+                ->orderBy('schoolyearID','DESC')
+                ->first()->schoolyearID;
                 
                 // "SELECT * FROM `notice` WHERE (
                 // SELECT schoolyearID FROM `student` where username = 'student02' limit 1
                 // ) ORDER BY `noticeID` desc"
                 $result = DB::table('notice')->select('*')
-                ->where('schoolyearID', $student->schoolyearID)
+                ->where('schoolyearID', $school_year_id)
                 ->orderBy('noticeID','desc')
                 ->get();
             }
@@ -101,13 +105,18 @@ class AnnouncementController extends Controller
             }
             else if($request->header('userTypeID') == 4)
             {
+                // $student = Student::getStudent($request);
+                // select schoolyearID from schoolyear order by schoolyearID desc limit 1 
+                $school_year_id = DB::table('schoolyear')->select('schoolyearID')
+                ->orderBy('schoolyearID','DESC')
+                ->first()->schoolyearID;
+
                 // "SELECT * FROM `event` WHERE (
                 // SELECT schoolyearID FROM `student` where username = 'student02' limit 1
                 // ) ORDER BY `fdate` desc, `ftime` asc"
-                $student = Student::getStudent($request);
                 
                 $result = DB::table('event')->select('*')
-                ->where('schoolyearID', $student->schoolyearID)
+                ->where('schoolyearID', $school_year_id)
                 ->orderBy('fdate','desc')
                 ->orderBy('ftime','asc')
                 ->get();
@@ -121,11 +130,13 @@ class AnnouncementController extends Controller
             foreach($result as $event)
             {
                 array_push($event_detail, [
+                    'id' => (string)$event->eventID,
                     'title' => $event->title,
                     'fromDate' => $event->fdate,
-                    'toDate' => $event->ttime,
+                    'toDate' => $event->tdate,
                     'details' => $event->details,
-                    'photo' => 'http://172.18.133.135:81/BRI-SmartSchool/uploads/images/'.$event->photo,
+                    // http://junio-smart.id/BRI-SmartSchool/uploads/images/default.png
+                    'photo' => 'http://junio-smart.id/BRI-SmartSchool/uploads/images/'.$event->photo,
                 ]);
             }
 
@@ -147,6 +158,29 @@ class AnnouncementController extends Controller
             
             if($request->header('userTypeID') == true)
             {
+                $check_flag_event = DB::table('eventcounter')->select('*')
+                ->where([
+                    ['eventID', $request->eventID],
+                    ['username', $auth->username],
+                ])->first();
+
+                if($check_flag_event == true)
+                {
+                    $update_flag_event = DB::table('eventcounter')
+                    ->where([
+                        ['eventcounterID', $check_flag_event->eventcounterID],
+                        ['eventID', $check_flag_event->eventID],
+                        ['username', $check_flag_event->username],
+                    ])
+                    ->update([
+                        'eventID' => $request->eventID,
+                        'username' => $auth->username,
+                        'status' => $request->status,
+                    ]);
+
+                    return response()->json(ResponseCode::success(''));
+                }
+                
                 $request->header('userTypeID') == 3 ? $type = 'Student' : $type = 'Parents';
 
                 // SELECT * FROM `event` WHERE `schoolyearID` = '1' ORDER BY `fdate` desc, `ftime` asc
@@ -192,14 +226,17 @@ class AnnouncementController extends Controller
             }
             else if($request->header('userTypeID') == 4)
             {
-                $student = Student::getStudent($request);
+                // $student = Student::getStudent($request);
 
                 // "SELECT * FROM `holiday` WHERE (
                 // SELECT schoolyearID FROM `student` where username = 'student02' limit 1
                 // ) ORDER BY `fdate` asc"
+                $school_year_id = DB::table('schoolyear')->select('schoolyearID')
+                ->orderBy('schoolyearID','DESC')
+                ->first()->schoolyearID;
                 
                 $result = DB::table('holiday')->select('*')
-                ->where('schoolyearID', $student->schoolyearID)
+                ->where('schoolyearID', $school_year_id)
                 ->orderBy('fdate','asc')
                 ->get();
             }
@@ -216,7 +253,7 @@ class AnnouncementController extends Controller
                     'fromDate' => $holiday->fdate,
                     'toDate' => $holiday->tdate,
                     'details' => $holiday->details,
-                    'photo' => 'http://172.18.133.135:81/BRI-SmartSchool/uploads/images/'.$holiday->photo,
+                    'photo' => 'http://junio-smart.id/BRI-SmartSchool/uploads/images/'.$holiday->photo,
                 ]);
             }
 
