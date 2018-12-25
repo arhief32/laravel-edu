@@ -104,3 +104,14 @@ Route::prefix('/parent')->middleware('parent')->group(function(){
         Route::get('/holiday','AnnouncementController@getHoliday');
     // });
 });
+
+
+
+
+
+
+
+/**
+ * NOTIFICATION EXAMPLE
+ */
+Route::get('example-notification','NotificationController@exampleNotification');
